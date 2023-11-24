@@ -27,5 +27,8 @@
     <ClCompile Include="MD_header.h">
       <Filter>헤더 파일</Filter>
     </ClCompile>
+    <ClCompile Include="aazzcc.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

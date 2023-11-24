@@ -182,6 +182,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="aazzcc.c" />
     <ClCompile Include="MD_header.h" />
     <ClCompile Include="MD_UI_cursor.c" />
     <ClCompile Include="MD_UI_test.c" />

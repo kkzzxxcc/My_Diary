@@ -28,7 +28,7 @@ char select_date[11];  // 선택된 날짜를 저장
 
 extern void write_entry(Entry* entry, const char* filename);
 extern void secure_file(const char* filename, const char* password, Entry* entry);
-extern void show_diary(const char* date, char* content);
+extern int show_diary(const char* date, char* content);
 
 extern void gotoxy_c(int x, int y);
 extern void print_calendar_ui(int cur_y, int cur_x);

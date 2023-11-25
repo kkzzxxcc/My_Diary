@@ -9,7 +9,7 @@ typedef struct
 
 char select_date[11];  // 선택된 날짜를 저장
 
-
+void MD_main_UI_c(int cur_y);
 void secure_file(const char* filename, const char* password, Entry* entry);
 void choose_menu(int cur_y);
 void main_choose_test();
@@ -18,8 +18,13 @@ void write_entry(Entry* entry, const char* filename);
 void ask_secure_UI(int cur_x);
 void choose_diary_UI();
 void show_diary_UI(char* selected_date, char* diary_content, int *source_file);
-void show_diary(const char* date, char* content);
+int show_diary(const char* date, char* content);
 void sort_dates(char dates[100][11], int date_count);
+void ask_password_UI(char* password);
+void save_secure_UI();
+void check_password_UI(char* password);
+void check_password_UI_2_0();
+void exit_UI();
 
 
 void gotoxy_c(int x, int y) 
@@ -39,10 +44,12 @@ void print_calendar_ui(int cur_y, int cur_x)
     for (i = 0; i < HEIGHT; i++) {
         for (j = 0; j < WIDTH; j++) {
             if (date <= 31) {
-                if (i == cur_y && j == cur_x) {
-                    printf("┃[%2d]   ", date);
+                if (i == cur_y && j == cur_x) 
+                {
+                    printf("┃ [%2d]  ", date);
                 }
-                else {
+                else 
+                {
                     printf("┃  %2d   ", date);
                 }
                 date++;
@@ -61,6 +68,49 @@ void print_calendar_ui(int cur_y, int cur_x)
 
     gotoxy(1, 15);
     printf("날짜를 선택해주세요");
+}
+
+
+void MD_main_test()
+{
+    setlocale(LC_ALL, "");
+
+    int cur_y = 0; // 상하로 이동하는 커서 위치
+    int ch;
+
+    while (1) {
+        MD_main_UI_c(cur_y);
+
+        ch = _getch();
+        switch (ch) 
+        {
+        case 72:  // UP
+            cur_y = cur_y - 1 >= 0 ? cur_y - 1 : 0;
+            break;
+        case 80:  // DOWN
+            cur_y = cur_y + 1 <= 2 ? cur_y + 1 : 2;
+            break;
+
+        case '\r':  // Enter key
+            if (cur_y == 0)
+                main_cursor_test();
+            else if (cur_y == 1)
+            {
+                exit_UI();
+                exit(0);
+            }
+            else
+                break;
+        }
+
+        if (ch == 'q' || ch == 'Q')
+        {
+            exit_UI();
+            break;  // 'q' 또는 'Q'를 누르면 루프 종료
+        }
+    }
+
+    return 0;
 }
     
 
@@ -128,12 +178,18 @@ void main_choose_test()
         case '\r':  // Enter key
             if (cur_y == 0)
                 write_diary_UI();
+            else if (cur_y == 2)
+                choose_diary_UI_c();
             else
                 return 0; 
         }
         
         if (ch == 'q' || ch == 'Q')
+        {
+            MD_main_test();
             break;  // 'q' 또는 'Q'를 누르면 루프 종료
+        }
+            
     }
 
     return 0;
@@ -193,11 +249,10 @@ void write_entry(Entry* entry, const char* filename)
         // 비밀번호 입력
         char password[100];
 
-        printf("보안을 위한 비밀번호를 입력하세요: ");
-        scanf("%s", password);
+        ask_password_UI(password);
 
-        secure_file(filename, password, entry);
-        printf("일기가 보안 되었습니다.");
+        secure_file(filename, &password, entry);
+        save_secure_UI();
     }
     else
     {
@@ -294,17 +349,32 @@ void choose_diary_UI_c()
             selected_index = selected_index + 1 < date_count ? selected_index + 1 : date_count - 1;
             break;
         case '\r':  // Enter key
+            {
             // 선택한 날짜에 해당하는 일기 보여주기
-            show_diary(dates[selected_index], diary_content, &source_file);  // 선택한 날짜의 일기 내용 가져오기
-            show_diary_UI(dates[selected_index], diary_content, &source_file);
-            return;
+            //show_diary(dates[selected_index], diary_content, &source_file);  // 선택한 날짜의 일기 내용 가져오기
+            //show_diary_UI(dates[selected_index], diary_content, &source_file);
+                int result = show_diary(dates[selected_index], diary_content, &source_file);
+                if (result == 0)  // 비밀번호가 맞았을 경우
+                {
+                    show_diary_UI(dates[selected_index], diary_content, &source_file);
+                    return;
+                }
+                // 비밀번호가 틀렸을 경우, 다시 날짜 선택 화면으로 돌아갑니다.
+                break;
+            }
+        }
+
+        if (ch == 'q' || ch == 'Q')
+        {
+            main_choose_test();
+            break;  // 'q' 또는 'Q'를 누르면 루프 종료
         }
 
         Sleep(100);  // CPU 사용량을 줄이기 위해 일시 정지
     }
 }
 
-void show_diary(const char* date, char* diary_content, int* source_file)
+int show_diary(const char* date, char* diary_content, int* source_file)
 {
     // 일반 파일에서 일기 내용 가져오기
     FILE* file = fopen("diary.txt", "rb");
@@ -335,23 +405,22 @@ void show_diary(const char* date, char* diary_content, int* source_file)
             {
                 // 보안된 일기라면 비밀번호를 물어봐야 합니다.
                 char password[100] = "";
-                printf("비밀번호를 입력하세요: ");
-                scanf("%s", password);
+                check_password_UI(password);
 
                 // 입력된 비밀번호가 일치하는지 확인
-                if (strcmp(password, entry.password) == 0)
+                if (strcmp(&password, entry.password) == 0)
                 {
                     strcpy(diary_content, entry.content);  // 일기 내용 복사
-                    *source_file = 1;  // 일반 파일로 설정
+                    *source_file = 1;  // 보안 파일로 설정
                     fclose(file);
-                    return;
+                    return 0;
                 }
                 else
                 {
-                    printf("비밀번호가 틀렸습니다.\n");
-                    strcpy(diary_content, "비밀번호가 틀렸습니다.");  // 오류 메시지 복사
+                    //strcpy(diary_content, "비밀번호가 틀렸습니다.");  // 오류 메시지 복사
+                    check_password_UI_2_0();
                     fclose(file);
-                    return;
+                    return -1;
                 }
             }
         }
@@ -399,10 +468,13 @@ void sort_dates(char dates[100][11], int date_count)
 int main()
 {
     //main_cursor_test();
-    choose_diary_UI_c();
+    //choose_diary_UI_c();
+    MD_main_test();
     return 0;
 
 }
+
+
 
 
 

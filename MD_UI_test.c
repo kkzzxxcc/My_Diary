@@ -596,6 +596,323 @@ void delete_diary(char* selected_date, int source_file)
 	}
 }
 
+void save_secure_UI()
+{
+	int i;
+
+
+	for (i = 6; i <= 19; i++)
+	{
+		gotoxy(18, i);
+		printf("┃                                                 ┃");
+	}
+
+	gotoxy(18, 6);
+	for (i = 0; i < 50; i++)
+		printf("━");
+
+	gotoxy(18, 20);
+	for (i = 0; i < 50; i++)
+		printf("━");
+
+
+
+	gotoxy(18, 6);
+	printf("┏");
+	gotoxy(68, 6);
+	printf("┓");
+	gotoxy(18, 20);
+	printf("┗");
+	gotoxy(68, 20);
+	printf("┛");
+
+	gotoxy(32, 13);
+	printf("보안후 저장되었습니다..");
+
+
+	gotoxy(60, 13);
+	printf("2");
+	Sleep(1000);
+	gotoxy(60, 13);
+	printf("1");
+	Sleep(1000);
+
+	gotoxy(1, 30);
+	printf("END");
+}
+
+void ask_password_UI(char *password)
+{
+	int i;
+
+	for (i = 6; i <= 19; i++)
+	{
+		gotoxy(18, i);
+		printf("┃                                                 ┃");
+	}
+
+	gotoxy(18, 6);
+	for (i = 0; i < 50; i++)
+		printf("━");
+
+	gotoxy(18, 20);
+	for (i = 0; i < 50; i++)
+		printf("━");
+
+
+
+	gotoxy(18, 6);
+	printf("┏");
+	gotoxy(68, 6);
+	printf("┓");
+	gotoxy(18, 20);
+	printf("┗");
+	gotoxy(68, 20);
+	printf("┛");
+
+	gotoxy(28, 12);
+	printf("보안을 위한 비밀번호를 입력하세요");
+	gotoxy(34, 14);
+	printf(">> ");
+	gotoxy(37, 14);
+	scanf("%s", password);
+
+
+	gotoxy(1, 30);
+	printf("END");
+}
+
+void check_save_UI()
+{
+	int i;
+
+
+	for (i = 6; i <= 19; i++)
+	{
+		gotoxy(18, i);
+		printf("┃                                                 ┃");
+	}
+
+	gotoxy(18, 6);
+	for (i = 0; i < 50; i++)
+		printf("━");
+
+	gotoxy(18, 20);
+	for (i = 0; i < 50; i++)
+		printf("━");
+
+
+
+	gotoxy(18, 6);
+	printf("┏");
+	gotoxy(68, 6);
+	printf("┓");
+	gotoxy(18, 20);
+	printf("┗");
+	gotoxy(68, 20);
+	printf("┛");
+
+	gotoxy(36, 13);
+	printf("저장되었습니다..");
+
+
+	gotoxy(54, 13);
+	printf("2");
+	Sleep(1000);
+	gotoxy(54, 13);
+	printf("1");
+	Sleep(1000);
+
+	gotoxy(1, 30);
+	printf("END");
+}
+
+void check_password_UI(char* password)
+{
+	int i;
+
+	for (i = 6; i <= 19; i++)
+	{
+		gotoxy(18, i);
+		printf("┃                                                 ┃");
+	}
+
+	gotoxy(18, 6);
+	for (i = 0; i < 50; i++)
+		printf("━");
+
+	gotoxy(18, 20);
+	for (i = 0; i < 50; i++)
+		printf("━");
+
+
+
+	gotoxy(18, 6);
+	printf("┏");
+	gotoxy(68, 6);
+	printf("┓");
+	gotoxy(18, 20);
+	printf("┗");
+	gotoxy(68, 20);
+	printf("┛");
+
+	gotoxy(24, 12);
+	printf("보안된 일기입니다. 비밀번호를 입력하세요");
+	gotoxy(34, 14);
+	printf(">> ");
+	gotoxy(37, 14);
+	scanf("%s", password);
+
+
+	gotoxy(1, 30);
+	printf("END");
+}
+
+void check_password_UI_2_0()
+{
+	int i;
+
+	for (i = 6; i <= 19; i++)
+	{
+		gotoxy(18, i);
+		printf("┃                                                 ┃");
+	}
+
+	gotoxy(18, 6);
+	for (i = 0; i < 50; i++)
+		printf("━");
+
+	gotoxy(18, 20);
+	for (i = 0; i < 50; i++)
+		printf("━");
+
+
+
+	gotoxy(18, 6);
+	printf("┏");
+	gotoxy(68, 6);
+	printf("┓");
+	gotoxy(18, 20);
+	printf("┗");
+	gotoxy(68, 20);
+	printf("┛");
+
+	gotoxy(32, 13);
+	printf("비밀번호가 틀렸습니다..");
+
+	gotoxy(56, 13);
+	printf("2");
+	Sleep(1000);
+	gotoxy(56, 13);
+	printf("1");
+	Sleep(1000);
+
+
+	gotoxy(1, 30);
+	printf("END");
+}
+
+void exit_UI()
+{
+	int i;
+
+
+	for (i = 6; i <= 19; i++)
+	{
+		gotoxy(18, i);
+		printf("┃                                                 ┃");
+	}
+
+	gotoxy(18, 6);
+	for (i = 0; i < 50; i++)
+		printf("━");
+
+	gotoxy(18, 20);
+	for (i = 0; i < 50; i++)
+		printf("━");
+
+
+
+	gotoxy(18, 6);
+	printf("┏");
+	gotoxy(68, 6);
+	printf("┓");
+	gotoxy(18, 20);
+	printf("┗");
+	gotoxy(68, 20);
+	printf("┛");
+
+	gotoxy(32, 13);
+	printf("프로그램을 종료합니다...");
+
+
+	gotoxy(60, 13);
+	printf("2");
+	Sleep(1000);
+	gotoxy(60, 13);
+	printf("1");
+	Sleep(1000);
+
+	gotoxy(1, 30);
+	printf("END");
+}
+
+void correct_password_UI()
+{
+	int i;
+
+	for (i = 6; i <= 19; i++)
+	{
+		gotoxy(18, i);
+		printf("┃                                                 ┃");
+	}
+
+	gotoxy(18, 6);
+	for (i = 0; i < 50; i++)
+		printf("━");
+
+	gotoxy(18, 20);
+	for (i = 0; i < 50; i++)
+		printf("━");
+
+
+
+	gotoxy(18, 6);
+	printf("┏");
+	gotoxy(68, 6);
+	printf("┓");
+	gotoxy(18, 20);
+	printf("┗");
+	gotoxy(68, 20);
+	printf("┛");
+
+	gotoxy(32, 13);
+	printf("비밀번호가 일치합니다!");
+
+	/*
+	gotoxy(56, 13);
+	printf("2");
+	Sleep(1000);
+	gotoxy(56, 13);
+	printf("1");
+	Sleep(1000);
+	*/
+
+
+	gotoxy(1, 30);
+	printf("END");
+}
+
+/*
+int main()
+{
+	char password[100];
+	check_password_UI(password);
+	return 0;
+
+}
+*/
+
 
 
 

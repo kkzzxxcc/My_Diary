@@ -1,30 +1,42 @@
 
 #include "MD_header.h"
 
-typedef struct
-{
-    char date[11];
-    int isSecure;
-} DiaryLocation;
-
-char select_date[11];  // 선택된 날짜를 저장
 
 void MD_main_UI_c(int cur_y);
 void secure_file(const char* filename, const char* password, Entry* entry);
 void choose_menu(int cur_y);
 void main_choose_test();
+
 void write_diary_UI();
+void write_memo_UI();
 void write_entry(Entry* entry, const char* filename);
-void ask_secure_UI(int cur_x);
+
 void choose_diary_UI();
+void choose_memo_UI();
+
+void choose_diary_UI_c();
+void choose_memo_UI_c();
+
 void show_diary_UI(char* selected_date, char* diary_content, int *source_file);
+void show_memo_UI(char* selected_date, char* memo_content, int* source_file);
 int show_diary(const char* date, char* content);
+int show_memo(const char* date, char* content);
+
 void sort_dates(char dates[100][11], int date_count);
+void ask_secure_UI(int cur_x);
 void ask_password_UI(char* password);
 void save_secure_UI();
 void check_password_UI(char* password);
 void check_password_UI_2_0();
 void exit_UI();
+void delete_diary(char* selected_date, int source_file);
+void change_diary(char* selected_date, int source_file);
+
+void search_UI(char* keyword);
+void search_diary_UI_c();
+void search_diary_UI();
+void search_memo_UI();
+void search_memo_UI_c();
 
 
 void gotoxy_c(int x, int y) 
@@ -66,8 +78,8 @@ void print_calendar_ui(int cur_y, int cur_x)
 
     printf("┗━━━━━━━┻━━━━━━━┻━━━━━━━┻━━━━━━━┻━━━━━━━┻━━━━━━━┻━━━━━━━┛\n");
 
-    gotoxy(1, 15);
-    printf("날짜를 선택해주세요");
+    gotoxy(1, 13);
+    printf("원하시는 날짜를 선택해주세요");
 }
 
 
@@ -88,13 +100,17 @@ void MD_main_test()
             cur_y = cur_y - 1 >= 0 ? cur_y - 1 : 0;
             break;
         case 80:  // DOWN
-            cur_y = cur_y + 1 <= 2 ? cur_y + 1 : 2;
+            cur_y = cur_y + 1 <= 3 ? cur_y + 1 : 3;
             break;
 
         case '\r':  // Enter key
             if (cur_y == 0)
                 main_cursor_test();
             else if (cur_y == 1)
+                search_diary_UI_c();
+            else if (cur_y == 2)
+                search_memo_UI_c();
+            else if (cur_y == 3)
             {
                 exit_UI();
                 exit(0);
@@ -178,8 +194,12 @@ void main_choose_test()
         case '\r':  // Enter key
             if (cur_y == 0)
                 write_diary_UI();
+            else if (cur_y == 1)
+                write_memo_UI();
             else if (cur_y == 2)
                 choose_diary_UI_c();
+            else if (cur_y == 3)
+                choose_memo_UI_c();
             else
                 return 0; 
         }
@@ -215,64 +235,6 @@ int left_right_key()
     return -1;
 }
 
-// 파일쓰기 함수
-void write_entry(Entry* entry, const char* filename)
-{
-    int secure = 0;
-    int cur_x = 0;
-    int ch;
-
-    while (1) 
-    {
-        ask_secure_UI(cur_x);  // 보안 UI에 현재 선택 위치 전달
-
-        ch = _getch();
-        switch (ch) {
-        case 75:  // LEFT
-            cur_x = cur_x - 1 >= 0 ? cur_x - 1 : 0;
-            break;
-        case 77:  // RIGHT
-            cur_x = cur_x + 1 <= 1 ? cur_x + 1 : 1;
-            break;
-
-        case '\r':  // Enter key
-            secure = cur_x == 0 ? 1 : 0;  // 현재 선택 위치가 보안 여부
-            break;
-        }
-
-        if (ch == '\r')
-            break;  // 엔터를 누르면 루프 종료
-    }
-
-    if (secure)
-    {
-        // 비밀번호 입력
-        char password[100];
-
-        ask_password_UI(password);
-
-        secure_file(filename, &password, entry);
-        save_secure_UI();
-    }
-    else
-    {
-        FILE* file = fopen(filename, "ab"); // 'ab' 모드로 오픈 파일이 이미 있다면 이어쓰기 가능
-        // 한글 문자열을 제대로 사용하기 위해 텍스트 모드가 아닌 바이너리 모드 사용
-
-        if (file != NULL)
-        {
-            fprintf(file, "%s|%s|", entry->date, entry->content); // '|' 문자로 날짜와 내용을 구분
-
-            fclose(file); // 파일 닫기
-
-            printf("일기가 저장되었습니다.");
-        }
-        else
-        {
-            printf("파일을 열 수 없습니다.");
-        }
-    }
-}
 
 
 void choose_diary_UI_c()
@@ -284,7 +246,7 @@ void choose_diary_UI_c()
     char diary_content[MAX_LEN];
 
     // 일기의 출처를 저장하는 변수 추가
-    int source_file[100];  // 0: 일반 파일, 1: 보안 파일
+    int source_file[100] = { 0 };  // 0: 일반 파일, 1: 보안 파일
 
     // 일반 파일에서 날짜 가져오기
     FILE* file = fopen("diary.txt", "rb");
@@ -349,19 +311,20 @@ void choose_diary_UI_c()
             selected_index = selected_index + 1 < date_count ? selected_index + 1 : date_count - 1;
             break;
         case '\r':  // Enter key
-            {
+        {
             // 선택한 날짜에 해당하는 일기 보여주기
-            //show_diary(dates[selected_index], diary_content, &source_file);  // 선택한 날짜의 일기 내용 가져오기
-            //show_diary_UI(dates[selected_index], diary_content, &source_file);
-                int result = show_diary(dates[selected_index], diary_content, &source_file);
-                if (result == 0)  // 비밀번호가 맞았을 경우
-                {
-                    show_diary_UI(dates[selected_index], diary_content, &source_file);
-                    return;
-                }
-                // 비밀번호가 틀렸을 경우, 다시 날짜 선택 화면으로 돌아갑니다.
-                break;
+            //show_diary(dates[selected_index], diary_content, &source_file[selected_index]);  // 선택한 날짜의 일기 내용 가져오기
+            //show_diary_UI(dates[selected_index], diary_content, &source_file[selected_index]);
+            //break;
+            int result = show_diary(dates[selected_index], diary_content, &source_file[selected_index]);
+            if (result == 0)  // 비밀번호가 맞았을 경우
+            {
+                show_diary_UI(dates[selected_index], diary_content, &source_file[selected_index]);
+                return;
             }
+            // 비밀번호가 틀렸을 경우, 다시 날짜 선택 화면으로 돌아갑니다.
+            break;
+        }
         }
 
         if (ch == 'q' || ch == 'Q')
@@ -374,62 +337,475 @@ void choose_diary_UI_c()
     }
 }
 
-int show_diary(const char* date, char* diary_content, int* source_file)
+void choose_memo_UI_c()
 {
-    // 일반 파일에서 일기 내용 가져오기
-    FILE* file = fopen("diary.txt", "rb");
+    char dates[100][11] = { 0 }; // 메모 날짜를 저장할 배열
+    int date_count = 0;  // 메모 날짜 개수
+    int selected_index = 0;  // 현재 선택된 날짜의 인덱스
+    int ch;
+    char memo_content[MAX_LEN];
+
+    // 메모의 출처를 저장하는 변수 추가
+    int source_file[100];  // 0: 일반 파일, 1: 보안 파일
+
+    // 일반 파일에서 날짜 가져오기
+    FILE* file = fopen("memo.txt", "rb");
     if (file != NULL)
     {
         Entry entry;
         while (fscanf(file, "%[^|]|%[^|]|", entry.date, entry.content) != EOF)
         {
-            if (strcmp(date, entry.date) == 0)  // 선택된 날짜와 일치하는지 확인
+            strcpy(dates[date_count], entry.date);  // 날짜 저장
+            source_file[date_count] = 0;
+            date_count++;
+        }
+        fclose(file);
+    }
+
+
+    // 보안 파일에서 날짜 가져오기
+    file = fopen("memo.txt.secure", "rb");
+    if (file != NULL)
+    {
+        char password[100];
+        Entry entry;
+        while (fscanf(file, "%[^|]|%[^|]|%[^|]|", password, entry.date, entry.content) != EOF)
+        {
+            strcpy(dates[date_count], entry.date);  // 날짜 저장
+            source_file[date_count] = 1;  // 보안 파일에서 읽어옴
+            date_count++;
+        }
+        fclose(file);
+    }
+
+    sort_dates(dates, date_count);
+
+    // 키보드로 날짜 선택
+    while (1)
+    {
+        // UI 그리기
+        choose_memo_UI();
+
+        // 일기 날짜 출력
+        int i;
+        for (i = 0; i < date_count; i++)
+        {
+            gotoxy(10, 8 + i % 17);
+            printf("%s", dates[i]);
+        }
+
+        // 현재 선택된 날짜 출력
+        gotoxy(8, 8 + selected_index % 17);
+        printf(">>");
+        gotoxy(8, 25);
+        printf(">>> %s", dates[selected_index]);
+
+        // 키보드 입력 확인
+        ch = _getch();
+        switch (ch)
+        {
+        case 72:  // UP
+            selected_index = selected_index - 1 >= 0 ? selected_index - 1 : 0;
+            break;
+        case 80:  // DOWN
+            selected_index = selected_index + 1 < date_count ? selected_index + 1 : date_count - 1;
+            break;
+        case '\r':  // Enter key
+        {
+            // 선택한 날짜에 해당하는 메모 보여주기
+            int result = show_memo(dates[selected_index], memo_content, &source_file);
+            if (result == 0)  // 비밀번호가 맞았을 경우
             {
-                strcpy(diary_content, entry.content);  // 일기 내용 복사
-                *source_file = 0;  // 일반 파일로 설정
-                fclose(file);
+                show_memo_UI(dates[selected_index], memo_content, &source_file);
                 return;
+            }
+            // 비밀번호가 틀렸을 경우, 다시 날짜 선택 화면으로 돌아갑니다.
+            break;
+        }
+        }
+
+        if (ch == 'q' || ch == 'Q')
+        {
+            main_choose_test();
+            break;  // 'q' 또는 'Q'를 누르면 루프 종료
+        }
+
+        Sleep(100);  // CPU 사용량을 줄이기 위해 일시 정지
+    }
+}
+
+void show_diary_UI(char* selected_date, char* diary_content, int* source_file)
+{
+    system("cls");
+    int i;
+    int ch;
+    int cur_x = 0;
+
+    for (i = 0; i < 110; i++)
+        printf("━");
+
+    gotoxy(1, 2);
+    for (i = 0; i < 27; i++)
+        printf("┃\t\t\t\t\t\t\t\t\t\t\t\t\t     ┃\n");
+
+    gotoxy(1, 28);
+    for (i = 0; i < 110; i++)
+        printf("━");
+
+    gotoxy(1, 1);
+    printf("┏");
+    gotoxy(110, 1);
+    printf("┓");
+    gotoxy(1, 28);
+    printf("┗");
+    gotoxy(110, 28);
+    printf("┛");
+
+    gotoxy(40, 2);
+    printf("%s 날짜의 일기입니다.", selected_date);
+
+    gotoxy(8, 8);
+    printf(">> %s", diary_content);
+
+    // 키보드로 명령 선택
+    while (1)
+    {
+        gotoxy(21, 25);
+        printf(cur_x == 0 ? "[ 수정하기 ]" : "  수정하기  ");
+
+        gotoxy(80, 25);
+        printf(cur_x == 1 ? "[ 삭제하기 ]" : "  삭제하기  ");
+
+        ch = _getch();
+        switch (ch)
+        {
+        case 75:  // LEFT
+            cur_x = 0;
+            break;
+        case 77:  // RIGHT
+            cur_x = 1;
+            break;
+        case '\r':  // Enter key
+            if (cur_x == 0)
+            {
+                // 수정하기
+                change_diary(selected_date, *source_file);
+            }
+            else
+            {
+                // 삭제하기
+                delete_diary(selected_date, *source_file);
+            }
+            return;
+        }
+
+        if (ch == 'q' || ch == 'Q')
+        {
+            choose_diary_UI_c();
+            break;  // 'q' 또는 'Q'를 누르면 루프 종료
+        }
+
+    }
+
+
+    gotoxy(1, 30);
+}
+
+void show_memo_UI(char* selected_date, char* memo_content, int* source_file)
+{
+    system("cls");
+    int i;
+    int ch;
+    int cur_x = 0;
+
+    for (i = 0; i < 110; i++)
+        printf("━");
+
+    gotoxy(1, 2);
+    for (i = 0; i < 27; i++)
+        printf("┃\t\t\t\t\t\t\t\t\t\t\t\t\t     ┃\n");
+
+    gotoxy(1, 28);
+    for (i = 0; i < 110; i++)
+        printf("━");
+
+    gotoxy(1, 1);
+    printf("┏");
+    gotoxy(110, 1);
+    printf("┓");
+    gotoxy(1, 28);
+    printf("┗");
+    gotoxy(110, 28);
+    printf("┛");
+
+    gotoxy(40, 2);
+    printf("%s 날짜의 메모입니다.", selected_date);
+
+    gotoxy(8, 8);
+    printf(">> %s", memo_content);
+
+    // 키보드로 명령 선택
+    while (1)
+    {
+        gotoxy(21, 25);
+        printf(cur_x == 0 ? "[ 수정하기 ]" : "  수정하기  ");
+
+        gotoxy(80, 25);
+        printf(cur_x == 1 ? "[ 삭제하기 ]" : "  삭제하기  ");
+
+        ch = _getch();
+        switch (ch)
+        {
+        case 75:  // LEFT
+            cur_x = 0;
+            break;
+        case 77:  // RIGHT
+            cur_x = 1;
+            break;
+        case '\r':  // Enter key
+            if (cur_x == 0)
+            {
+                // 수정하기
+                change_memo(selected_date, *source_file);
+            }
+            else
+            {
+                // 삭제하기
+                delete_memo(selected_date, *source_file);
+            }
+            return;
+        }
+        if (ch == 'q' || ch == 'Q')
+        {
+            choose_memo_UI_c();
+            break;  // 'q' 또는 'Q'를 누르면 루프 종료
+        }
+
+    }
+
+
+    gotoxy(1, 30);
+
+}
+
+
+// 일기 검색 함수
+void search_diary_UI_c()
+{
+    char keyword[MAX_LEN];
+    search_UI(keyword);  // UI에서 키워드 입력받기
+
+    // fgets 함수는 문자열 끝에 ' ' 문자를 포함시키므로 이를 제거합니다.
+    int len = strlen(keyword);
+    if (keyword[len - 1] == ' ') keyword[len - 1] = '\0';
+
+    char dates[100][11] = { 0 }; // 일기 날짜를 저장할 배열
+    int date_count = 0;  // 일기 날짜 개수
+    int selected_index = 0;  // 현재 선택된 날짜의 인덱스
+    int ch;
+    char diary_content[MAX_LEN];
+
+    // 일기의 출처를 저장하는 변수 추가
+    int source_file[100] = { 0 };  // 0: 일반 파일, 1: 보안 파일
+
+    // 일반 파일에서 검색
+    FILE * file = fopen("diary.txt", "rb");
+    if (file != NULL)
+    {
+        Entry entry;
+        while (fscanf(file, "%[^|]|%[^|]|", entry.date, entry.content) != EOF)
+        {
+            if (strstr(entry.content, keyword) != NULL)  // 일기 내용에 키워드가 포함되어 있는지 확인
+            {
+                strcpy(dates[date_count], entry.date);  // 날짜 저장
+                source_file[date_count] = 0;  // 일반 파일로 설정
+                date_count++;
             }
         }
         fclose(file);
     }
 
-    // 보안 파일에서 일기 내용 가져오기
+    // 보안 파일에서 검색
     file = fopen("diary.txt.secure", "rb");
     if (file != NULL)
     {
         Entry entry;
         while (fscanf(file, "%[^|]|%[^|]|%[^|]|", entry.password, entry.date, entry.content) != EOF)
         {
-            if (strcmp(date, entry.date) == 0)  // 선택된 날짜와 일치하는지 확인
+            if (strstr(entry.content, keyword) != NULL)  // 일기 내용에 키워드가 포함되어 있는지 확인
             {
-                // 보안된 일기라면 비밀번호를 물어봐야 합니다.
-                char password[100] = "";
-                check_password_UI(password);
-
-                // 입력된 비밀번호가 일치하는지 확인
-                if (strcmp(&password, entry.password) == 0)
-                {
-                    strcpy(diary_content, entry.content);  // 일기 내용 복사
-                    *source_file = 1;  // 보안 파일로 설정
-                    fclose(file);
-                    return 0;
-                }
-                else
-                {
-                    //strcpy(diary_content, "비밀번호가 틀렸습니다.");  // 오류 메시지 복사
-                    check_password_UI_2_0();
-                    fclose(file);
-                    return -1;
-                }
+                strcpy(dates[date_count], entry.date);  // 날짜 저장
+                source_file[date_count] = 1;  // 보안 파일로 설정
+                date_count++;
             }
         }
         fclose(file);
     }
 
-    // 일기를 찾지 못한 경우
-    strcpy(diary_content, "일기를 찾지 못했습니다.");
+    sort_dates(dates, date_count);
+
+    // 키보드로 날짜 선택
+    while (1)
+    {
+        // UI 그리기
+        search_diary_UI();
+
+        // 일기 날짜 출력
+        int i;
+        for (i = 0; i < date_count; i++)
+        {
+            gotoxy(10, 8 + i % 17);
+            printf("%s", dates[i]);
+        }
+
+        // 현재 선택된 날짜 출력
+        gotoxy(8, 8 + selected_index % 17);
+        printf(">>");
+        gotoxy(8, 25);
+        printf(">>> %s", dates[selected_index]);
+
+        // 키보드 입력 확인
+        ch = _getch();
+        switch (ch)
+        {
+        case 72:  // UP
+            selected_index = selected_index - 1 >= 0 ? selected_index - 1 : 0;
+            break;
+        case 80:  // DOWN
+            selected_index = selected_index + 1 < date_count ? selected_index + 1 : date_count - 1;
+            break;
+        case '\r':  // Enter key
+        {
+            // 선택한 날짜에 해당하는 일기 보여주기
+            int result = show_diary(dates[selected_index], diary_content, &source_file[selected_index]);
+            if (result == 0)  // 비밀번호가 맞았을 경우
+            {
+                show_diary_UI(dates[selected_index], diary_content, &source_file[selected_index]);
+                return;
+            }
+            // 비밀번호가 틀렸을 경우, 다시 날짜 선택 화면으로 돌아갑니다.
+            break;
+        }
+        }
+
+        if (ch == 'q' || ch == 'Q')
+        {
+            break;  // 'q' 또는 'Q'를 누르면 루프 종료
+        }
+
+        Sleep(100);  // CPU 사용량을 줄이기 위해 일시 정지
+    }
 }
+
+// 일기 검색 함수
+void search_memo_UI_c()
+{
+    char keyword[MAX_LEN];
+    search_UI(keyword);  // UI에서 키워드 입력받기
+
+    // fgets 함수는 문자열 끝에 ' ' 문자를 포함시키므로 이를 제거합니다.
+    int len = strlen(keyword);
+    if (keyword[len - 1] == ' ') keyword[len - 1] = '\0';
+
+    char dates[100][11] = { 0 }; // 일기 날짜를 저장할 배열
+    int memo_count = 0;  // 메모 날짜 개수
+    int selected_index = 0;  // 현재 선택된 날짜의 인덱스
+    int ch;
+    char memo_content[MAX_LEN];
+
+    // 일기의 출처를 저장하는 변수 추가
+    int source_file[100] = { 0 };  // 0: 일반 파일, 1: 보안 파일
+
+    // 일반 파일에서 검색
+    FILE* file = fopen("memo.txt", "rb");
+    if (file != NULL)
+    {
+        Entry entry;
+        while (fscanf(file, "%[^|]|%[^|]|", entry.date, entry.content) != EOF)
+        {
+            if (strstr(entry.content, keyword) != NULL)  // 일기 내용에 키워드가 포함되어 있는지 확인
+            {
+                strcpy(dates[memo_count], entry.date);  // 날짜 저장
+                source_file[memo_count] = 0;  // 일반 파일로 설정
+                memo_count++;
+            }
+        }
+        fclose(file);
+    }
+
+    // 보안 파일에서 검색
+    file = fopen("memo.txt.secure", "rb");
+    if (file != NULL)
+    {
+        Entry entry;
+        while (fscanf(file, "%[^|]|%[^|]|%[^|]|", entry.password, entry.date, entry.content) != EOF)
+        {
+            if (strstr(entry.content, keyword) != NULL)  // 일기 내용에 키워드가 포함되어 있는지 확인
+            {
+                strcpy(dates[memo_count], entry.date);  // 날짜 저장
+                source_file[memo_count] = 1;  // 보안 파일로 설정
+                memo_count++;
+            }
+        }
+        fclose(file);
+    }
+
+    sort_dates(dates, memo_count);
+
+    // 키보드로 날짜 선택
+    while (1)
+    {
+        // UI 그리기
+        search_memo_UI();
+
+        // 메모 날짜 출력
+        int i;
+        for (i = 0; i < memo_count; i++)
+        {
+            gotoxy(10, 8 + i % 17);
+            printf("%s", dates[i]);
+        }
+
+        // 현재 선택된 날짜 출력
+        gotoxy(8, 8 + selected_index % 17);
+        printf(">>");
+        gotoxy(8, 25);
+        printf(">>> %s", dates[selected_index]);
+
+        // 키보드 입력 확인
+        ch = _getch();
+        switch (ch)
+        {
+        case 72:  // UP
+            selected_index = selected_index - 1 >= 0 ? selected_index - 1 : 0;
+            break;
+        case 80:  // DOWN
+            selected_index = selected_index + 1 < memo_count ? selected_index + 1 : memo_count - 1;
+            break;
+        case '\r':  // Enter key
+        {
+            // 선택한 날짜에 해당하는 메모 보여주기
+            int result = show_memo(dates[selected_index], memo_content, &source_file[selected_index]);
+            if (result == 0)  // 비밀번호가 맞았을 경우
+            {
+                show_memo_UI(dates[selected_index], memo_content, &source_file[selected_index]);
+                return;
+            }
+            // 비밀번호가 틀렸을 경우, 다시 날짜 선택 화면으로 돌아갑니다.
+            break;
+        }
+        }
+
+        if (ch == 'q' || ch == 'Q')
+        {
+            break;  // 'q' 또는 'Q'를 누르면 루프 종료
+        }
+
+        Sleep(100);  // CPU 사용량을 줄이기 위해 일시 정지
+    }
+}
+
+
 
 // 날짜를 최근순으로 정렬해주기위해 날짜 문자열을 숫자로 변환하여 크기를 비교하여 가장 큰 숫자가 최근이 된다.
 // 구현하기 쉬운 버블정렬을 사용, 효율은 별로지만 일기 날짜 정렬은 간단하기 때문에 성능 최적화가 따로 필요없기 때문에 버블을 사용
@@ -464,15 +840,6 @@ void sort_dates(char dates[100][11], int date_count)
 
 
 
-
-int main()
-{
-    //main_cursor_test();
-    //choose_diary_UI_c();
-    MD_main_test();
-    return 0;
-
-}
 
 
 

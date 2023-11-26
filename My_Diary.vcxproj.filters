@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="My_Diary_file_test.c">
+    <ClCompile Include="MD_file_test.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="MD_UI_test.c">
+    <ClCompile Include="MD_UI.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="MD_UI_cursor.c">
@@ -27,7 +27,16 @@
     <ClCompile Include="MD_header.h">
       <Filter>헤더 파일</Filter>
     </ClCompile>
-    <ClCompile Include="aazzcc.c">
+    <ClCompile Include="MD_main.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="diary.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="memo.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="test_test.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

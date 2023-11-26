@@ -23,12 +23,10 @@ void secure_file(const char* filename, const char* password, Entry* entry)
         fprintf(secure_file, "%s|%s|%s|", password, entry->date, entry->content);
 
         fclose(secure_file);
-
-        printf("일기가 보안되었습니다.");
     }
     else
     {
-        printf("일기 보안에 실패했습니다.");
+        printf("보안에 실패했습니다.");
     }
 }
 

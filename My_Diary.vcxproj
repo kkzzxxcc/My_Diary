@@ -182,11 +182,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="aazzcc.c" />
+    <ClCompile Include="MD_main.c" />
     <ClCompile Include="MD_header.h" />
+    <ClCompile Include="memo.c" />
     <ClCompile Include="MD_UI_cursor.c" />
-    <ClCompile Include="MD_UI_test.c" />
-    <ClCompile Include="My_Diary_file_test.c" />
+    <ClCompile Include="MD_UI.c" />
+    <ClCompile Include="MD_file_test.c" />
+    <ClCompile Include="diary.c" />
+    <ClCompile Include="test_test.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -397,7 +397,7 @@ void ask_secure_UI(int cur_x)
 	*/
 
 	gotoxy(1, 30);
-	printf("END");
+
 }
 
 void choose_diary_UI()

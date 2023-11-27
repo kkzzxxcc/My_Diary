@@ -89,7 +89,7 @@ int show_diary(const char* date, char* diary_content, int* source_file)
             if (strcmp(date, entry.date) == 0)  // 선택된 날짜와 일치하는지 확인
             {
                 strcpy(diary_content, entry.content);  // 일기 내용 복사
-                *source_file = 0;  // 일반 파일로 설정
+                *source_file = 0;  // 일반파일로 설정
                 fclose(file);
                 return;
             }

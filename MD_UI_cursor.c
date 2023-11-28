@@ -34,7 +34,7 @@ void change_diary(char* selected_date, int source_file);
 
 void search_UI(char* keyword);
 void search_diary_UI_c();
-void search_diary_UI();
+void search_diary_UI(char *keyword);
 void search_memo_UI();
 void search_memo_UI_c();
 
@@ -304,7 +304,7 @@ void choose_diary_UI_c()
         gotoxy(8, 8 + selected_index % 17);
         printf(">>");
         gotoxy(8, 25);
-        printf(">>> %s", dates[selected_index]);
+        printf(">>> %s", dates);
 
         // 키보드 입력 확인
         ch = _getch();
@@ -654,7 +654,7 @@ void search_diary_UI_c()
     while (1)
     {
         // 검색 ui호출
-        search_diary_UI();
+        search_diary_UI(keyword);
 
         // 일기 날짜 출력
         int i;

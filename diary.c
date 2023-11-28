@@ -2,7 +2,6 @@
 #include "MD_header.h"
 
 
-void secure_file(const char* filename, const char* password, Entry* entry);
 void write_entry(Entry* entry, const char* filename);
 void ask_secure_UI(int cur_x);
 void ask_password_UI(char* password);
@@ -53,7 +52,7 @@ void write_entry(Entry* entry, const char* filename)
 
         ask_password_UI(password);
 
-        secure_file(filename, &password, entry);
+        secure_file(filename, password, entry);
         save_secure_UI();
     }
     else
@@ -260,17 +259,24 @@ void change_diary(char* selected_date, int source_file)
         if (file != NULL && temp_file != NULL)
         {
             Entry entry;
+            int ischange = 0;
             while (!feof(file))
             {
                 fscanf(file, "%[^|]|%[^|]|%[^|]|", entry.password, entry.date, entry.content);
                 if (strcmp(selected_date, entry.date) == 0)  // 선택된 날짜와 일치하는지 확인
                 {
                     strcpy(entry.content, new_content);  // 일기 내용 수정
-                    fprintf(temp_file, "%s|%s|%s|", entry.password, entry.date, entry.content);  // 수정된 일기 내용을 임시 파일에 쓰기
+                    ischange = 1;  // 수정 플래그 설정
                 }
-                else
+
+                if (ischange)  // 수정된 경우
                 {
-                    fprintf(temp_file, "%s|%s|%s|", entry.password, entry.date, entry.content);  // 원래 일기 내용을 임시 파일에 쓰기
+                    fprintf(temp_file, "%s|%s|%s|", entry.password, entry.date, entry.content);  // 수정된 일기 내용을 임시 파일에 쓰기
+                    ischange = 0;  // 수정 플래그 초기화
+                }
+                else  // 수정되지 않은 경우
+                {
+                    fprintf(temp_file, "%s|%s|%s|",entry.password, entry.date, entry.content);  // 원래 일기 내용을 임시 파일에 쓰기
                 }
             }
             fclose(file);

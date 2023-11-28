@@ -11,7 +11,7 @@ void change_diary(char* selected_date);
 void delete_diary(char* selected_date);
 void choose_diary_UI_c();
 
-
+// gotoxy 함수
 void gotoxy(int x, int y)
 {
 	COORD Pos = { x - 1, y - 1 };
@@ -253,11 +253,12 @@ void write_diary_UI()
 	printf("일기 작성중 >> ");
 
 	// 일기 내용 입력받기
-	Entry diary_entry;
+	Entry diary_entry; // 구조체 선언
 	strcpy(diary_entry.date, select_date);  // 선택된 날짜 설정
 	char line[101];  // 한 줄의 일기 내용을 임시 저장할 변수
 
-	for (i = 0; i < 27; i++) {  // 각 줄에 대해
+	for (i = 0; i < 27; i++) 
+	{  
 		gotoxy(20, 8 + i);  // 새로운 줄의 시작 좌표 설정
 		fgets(line, 101, stdin);  // 한 줄의 일기 내용을 임시 변수에 저장
 
@@ -268,7 +269,7 @@ void write_diary_UI()
 		}
 
 		strcpy(&diary_entry.content[j], line);  // 임시 변수의 내용을 diary_entry.content에 복사
-		j += strlen(line);  // 다음 줄의 시작 위치로 이동
+		j += strlen(line);  // 다음 줄의 시작 위치로 이동 j에 라인 배열의 문자열을 더해서 저장
 	}
 
 
@@ -315,23 +316,24 @@ void write_memo_UI()
 	gotoxy(5, 8);
 	printf("메모 작성중 >> ");
 
-	// 일기 내용 입력받기
+	// 메모 내용 입력받기
 	Entry memo_entry;
 	strcpy(memo_entry.date, select_date);  // 선택된 날짜 설정
 	char line[101];  // 한 줄의 일기 내용을 임시 저장할 변수
 
-	for (i = 0; i < 27; i++) {  // 각 줄에 대해
+	for (i = 0; i < 27; i++) 
+	{  
 		gotoxy(20, 8 + i);  // 새로운 줄의 시작 좌표 설정
-		fgets(line, 101, stdin);  // 한 줄의 일기 내용을 임시 변수에 저장
+		fgets(line, 101, stdin);  // 한 줄의 메모 내용을 임시 변수에 저장
 
-		// 엔터를 두 번 입력하면 일기 작성 종료
+		// 엔터를 두 번 입력하면 메모 작성 종료
 		if (strcmp(line, "\n") == 0)
 		{
 			break;
 		}
 
-		strcpy(&memo_entry.content[j], line);  // 임시 변수의 내용을 diary_entry.content에 복사
-		j += strlen(line);  // 다음 줄의 시작 위치로 이동
+		strcpy(&memo_entry.content[j], line);  // 임시 변수의 내용을 memo_entry.content에 복사
+		j += strlen(line);  
 	}
 
 
@@ -776,7 +778,7 @@ void search_UI(char* keyword)
 	gotoxy(1, 30);
 }
 
-void search_diary_UI()
+void search_diary_UI(char* keyword)
 {
 	system("cls");
 	int i;
@@ -801,8 +803,10 @@ void search_diary_UI()
 	gotoxy(110, 28);
 	printf("┛");
 
-	gotoxy(36, 2);
+	gotoxy(32, 2);
 	printf("검색하신 키워드가 포함된 일기의 날짜입니다.");
+	gotoxy(45, 3);
+	printf("키워드 : %s", keyword);
 
 	/*
 	gotoxy(8, 8);

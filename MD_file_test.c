@@ -13,7 +13,7 @@ void MD_main_UI_c(int cur_y);
 void secure_file(const char* filename, const char* password, Entry* entry)
 {
     char secure_filename[100];
-    sprintf(secure_filename, "%s.secure", filename); // 기존 파일 이름에 .secure 확장자를 붙여서 보안 파일 이름 생성
+    sprintf(secure_filename, "%s.secure", filename); // 기존 파일 이름에 .secure 확장자를 붙여서 보안 파일 생성
 
     FILE* secure_file = fopen(secure_filename, "ab");
 

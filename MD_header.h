@@ -1,16 +1,15 @@
 #define _CRT_SECURE_NO_WARNINGS  // 비주얼 스튜디오에서 sacnf 오류 무시해주는 정의
 
 
-#include <windows.h>
-#include <conio.h>
+#include <windows.h> // windows api를 사용하기위한 헤더파일
+#include <conio.h> // 콘솔 입출력 관련 헤더파일
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <locale.h>
+#include <locale.h> // 로캘 설정을 위한 헤더파일
 
-#define P 38
-#define PP P+21
+
 // ┫ ┃ ━ ┓ ┛ ┗ ┏ ┳ ┻ ┣ ╋
 
 #define WIDTH 7
@@ -34,7 +33,7 @@ extern void secure_file(const char* filename, const char* password, Entry* entry
 extern int show_diary(const char* date, char* content);
 
 
-extern void gotoxy_c(int x, int y);
+extern void gotoxy_c(int x, int y); // 커서위치 이동
 extern void print_calendar_ui(int cur_y, int cur_x);
 
 extern void main_cursor_test();

@@ -83,7 +83,7 @@ int show_diary(const char* date, char* diary_content, int* source_file)
     if (file != NULL)
     {
         Entry entry;
-        while (fscanf(file, "%[^|]|%[^|]|", entry.date, entry.content) != EOF)
+        while (fscanf(file, "%[^|]|%[^|]|", entry.date, entry.content) != EOF) // 구분자가 나오기 전까지 형식을 읽어옴
         {
             if (strcmp(date, entry.date) == 0)  // 선택된 날짜와 일치하는지 확인
             {

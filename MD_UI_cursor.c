@@ -35,7 +35,7 @@ void change_diary(char* selected_date, int source_file);
 void search_UI(char* keyword);
 void search_diary_UI_c();
 void search_diary_UI(char *keyword);
-void search_memo_UI();
+void search_memo_UI(char* keyword);
 void search_memo_UI_c();
 
 
@@ -762,7 +762,7 @@ void search_memo_UI_c()
     while (1)
     {
         // 메모 검색 ui
-        search_memo_UI();
+        search_memo_UI(keyword);
 
         // 메모 날짜 출력
         int i;

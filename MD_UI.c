@@ -382,9 +382,9 @@ void ask_secure_UI(int cur_x)
 
 	// 현재 선택 위치에 따라 강조 표시
 	gotoxy(30, 16);
-	printf(cur_x == 0 ? "> 예 " : "  예 ");
+	printf(cur_x == 0 ? "[ 예 ]" : "  예 ");
 	gotoxy(51, 16);
-	printf(cur_x == 1 ? "> 아니오 " : "  아니오 ");
+	printf(cur_x == 1 ? "[ 아니오 ]" : "  아니오 ");
 
 	/*
 	gotoxy(80, 20);
@@ -820,7 +820,7 @@ void search_diary_UI(char* keyword)
 
 }
 
-void search_memo_UI()
+void search_memo_UI(char *keyword)
 {
 	system("cls");
 	int i;
@@ -847,6 +847,8 @@ void search_memo_UI()
 
 	gotoxy(36, 2);
 	printf("검색하신 키워드가 포함된 메모의 날짜입니다.");
+	gotoxy(45, 3);
+	printf("키워드 : %s", keyword);
 
 	/*
 	gotoxy(8, 8);
@@ -900,8 +902,11 @@ void exit_UI()
 	gotoxy(60, 13);
 	printf("1");
 	Sleep(1000);
+	gotoxy(60, 13);
+	printf("0");
 
 	gotoxy(1, 30);
+	system("cls");
 }
 
 void correct_password_UI()

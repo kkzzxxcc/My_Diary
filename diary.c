@@ -79,58 +79,66 @@ void write_entry(Entry* entry, const char* filename)
 int show_diary(const char* date, char* diary_content, int* source_file)
 {
     // 일반 파일에서 일기 내용 가져오기
-    FILE* file = fopen("diary.txt", "rb");
-    if (file != NULL)
+    if (*source_file == 0)
     {
-        Entry entry;
-        while (fscanf(file, "%[^|]|%[^|]|", entry.date, entry.content) != EOF) // 구분자가 나오기 전까지 형식을 읽어옴
-        {
-            if (strcmp(date, entry.date) == 0)  // 선택된 날짜와 일치하는지 확인
-            {
-                strcpy(diary_content, entry.content);  // 일기 내용 복사
-                *source_file = 0;  // 일반파일로 설정
-                fclose(file);
-                return;
-            }
-        }
-        fclose(file);
-    }
 
-    // 보안 파일에서 일기 내용 가져오기
-    file = fopen("diary.txt.secure", "rb");
-    if (file != NULL)
-    {
-        Entry entry;
-        while (fscanf(file, "%[^|]|%[^|]|%[^|]|", entry.password, entry.date, entry.content) != EOF)
+        FILE* file = fopen("diary.txt", "rb");
+        if (file != NULL)
         {
-            if (strcmp(date, entry.date) == 0)  // 선택된 날짜와 일치하는지 확인
+            Entry entry;
+            while (fscanf(file, "%[^|]|%[^|]|", entry.date, entry.content) != EOF) // 구분자가 나오기 전까지 형식을 읽어옴
             {
-                // 보안된 일기라면 비밀번호를 물어봄
-                char password[100] = "";
-                check_password_UI(password);
-
-                // 입력된 비밀번호가 일치하는지 확인
-                if (strcmp(password, entry.password) == 0)
+                if (strcmp(date, entry.date) == 0)  // 선택된 날짜와 일치하는지 확인
                 {
                     strcpy(diary_content, entry.content);  // 일기 내용 복사
-                    *source_file = 1;  // 보안 파일로 설정
+                    *source_file = 0;  // 일반파일로 설정
                     fclose(file);
-                    return 0;
-                }
-                else
-                {
-                    //strcpy(diary_content, "비밀번호가 틀렸습니다.");  // 오류 메시지 복사
-                    check_password_UI_2_0();
-                    fclose(file);
-                    return -1;
+                    return;
                 }
             }
+            fclose(file);
         }
-        fclose(file);
+    }
+
+    else if (*source_file == 1)
+    {
+        // 보안 파일에서 일기 내용 가져오기
+        FILE* file = fopen("diary.txt.secure", "rb");
+        if (file != NULL)
+        {
+            Entry entry;
+            while (fscanf(file, "%[^|]|%[^|]|%[^|]|", entry.password, entry.date, entry.content) != EOF)
+            {
+                if (strcmp(date, entry.date) == 0)  // 선택된 날짜와 일치하는지 확인
+                {
+                    // 보안된 일기라면 비밀번호를 물어봄
+                    char password[100] = "";
+                    check_password_UI(password);
+
+                    // 입력된 비밀번호가 일치하는지 확인
+                    if (strcmp(password, entry.password) == 0)
+                    {
+                        strcpy(diary_content, entry.content);  // 일기 내용 복사
+                        *source_file = 1;  // 보안 파일로 설정
+                        fclose(file);
+                        return 0;
+                    }
+                    else
+                    {
+                        //strcpy(diary_content, "비밀번호가 틀렸습니다.");  // 오류 메시지 복사
+                        check_password_UI_2_0();
+                        fclose(file);
+                        return -1;
+                    }
+                }
+            }
+            fclose(file);
+        }
     }
 
     // 일기를 찾지 못한 경우
     strcpy(diary_content, "일기를 찾지 못했습니다.");
+    return -1;
 }
 
 /*
@@ -225,19 +233,19 @@ void change_diary(char* selected_date, int source_file)
             if (file != NULL && temp_file != NULL)
             {
                 Entry entry;
-                int ischange = 0;
+                int change = 0;
                 while (fscanf(file, "%[^|]|%[^|]|", entry.date, entry.content) != EOF)
                 {
                     if (strcmp(selected_date, entry.date) == 0)  // 선택된 날짜와 일치하는지 확인
                     {
                         strcpy(entry.content, new_content);  // 일기 내용 수정
-                        ischange = 1;  // 수정 플래그 설정
+                        change = 1;  // 수정 플래그 설정
                     }
 
-                    if (ischange)  // 수정된 경우
+                    if (change)  // 수정된 경우
                     {
                         fprintf(temp_file, "%s|%s|", entry.date, entry.content);  // 수정된 일기 내용을 임시 파일에 쓰기
-                        ischange = 0;  // 수정 플래그 초기화
+                        change = 0;  // 수정 플래그 초기화
                     }
                     else  // 수정되지 않은 경우
                     {
@@ -259,20 +267,20 @@ void change_diary(char* selected_date, int source_file)
         if (file != NULL && temp_file != NULL)
         {
             Entry entry;
-            int ischange = 0;
-            while (!feof(file))
+            int change = 0;
+            while (fscanf(file, "%[^|]|%[^|]|%[^|]|", entry.password, entry.date, entry.content) != EOF)
             {
-                fscanf(file, "%[^|]|%[^|]|%[^|]|", entry.password, entry.date, entry.content);
+                //fscanf(file, "%[^|]|%[^|]|%[^|]|", entry.password, entry.date, entry.content);
                 if (strcmp(selected_date, entry.date) == 0)  // 선택된 날짜와 일치하는지 확인
                 {
                     strcpy(entry.content, new_content);  // 일기 내용 수정
-                    ischange = 1;  // 수정 플래그 설정
+                    change = 1;  // 수정 플래그 설정
                 }
 
-                if (ischange)  // 수정된 경우
+                if (change)  // 수정된 경우
                 {
                     fprintf(temp_file, "%s|%s|%s|", entry.password, entry.date, entry.content);  // 수정된 일기 내용을 임시 파일에 쓰기
-                    ischange = 0;  // 수정 플래그 초기화
+                    change = 0;  // 수정 플래그 초기화
                 }
                 else  // 수정되지 않은 경우
                 {

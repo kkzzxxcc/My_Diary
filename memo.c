@@ -95,57 +95,63 @@ void write_memo(Entry* entry, const char* filename)
 int show_memo(const char* date, char* memo_content, int* source_file)
 {
 	// 일반 파일에서 메모 내용 가져오기
-	FILE* file = fopen("memo.txt", "rb");
-	if (file != NULL)
+	if (*source_file == 0)
 	{
-		Entry entry;
-		while (fscanf(file, "%[^|]|%[^|]|", entry.date, entry.content) != EOF)
+		FILE* file = fopen("memo.txt", "rb");
+		if (file != NULL)
 		{
-			if (strcmp(date, entry.date) == 0)  // 선택된 날짜와 일치하는지 확인
+			Entry entry;
+			while (fscanf(file, "%[^|]|%[^|]|", entry.date, entry.content) != EOF)
 			{
-				strcpy(memo_content, entry.content);  // 메모 내용 복사
-				*source_file = 0;  // 일반 파일로 설정
-				fclose(file);
-				return;
+				if (strcmp(date, entry.date) == 0)  // 선택된 날짜와 일치하는지 확인
+				{
+					strcpy(memo_content, entry.content);  // 메모 내용 복사
+					*source_file = 0;  // 일반 파일로 설정
+					fclose(file);
+					return;
+				}
 			}
+			fclose(file);
 		}
-		fclose(file);
 	}
 
 	// 보안 파일에서 메모 내용 가져오기
-	file = fopen("memo.txt.secure", "rb");
-	if (file != NULL)
+	else if (*source_file == 1)
 	{
-		Entry entry;
-		while (fscanf(file, "%[^|]|%[^|]|%[^|]|", entry.password, entry.date, entry.content) != EOF)
+		FILE *file = fopen("memo.txt.secure", "rb");
+		if (file != NULL)
 		{
-			if (strcmp(date, entry.date) == 0)  // 선택된 날짜와 일치하는지 확인
+			Entry entry;
+			while (fscanf(file, "%[^|]|%[^|]|%[^|]|", entry.password, entry.date, entry.content) != EOF)
 			{
-				// 보안된 메모라면 비밀번호를 물어봐야 합니다.
-				char password[100] = "";
-				check_password_UI_m(password);
+				if (strcmp(date, entry.date) == 0)  // 선택된 날짜와 일치하는지 확인
+				{
+					// 보안된 메모라면 비밀번호를 물어봐야 합니다.
+					char password[100] = "";
+					check_password_UI_m(password);
 
-				// 입력된 비밀번호가 일치하는지 확인
-				if (strcmp(&password, entry.password) == 0)
-				{
-					strcpy(memo_content, entry.content);  // 일기 내용 복사
-					*source_file = 1;  // 보안 파일로 설정
-					fclose(file);
-					return 0;
-				}
-				else
-				{
-					check_password_UI_2_0();
-					fclose(file);
-					return -1;
+					// 입력된 비밀번호가 일치하는지 확인
+					if (strcmp(&password, entry.password) == 0)
+					{
+						strcpy(memo_content, entry.content);  // 일기 내용 복사
+						*source_file = 1;  // 보안 파일로 설정
+						fclose(file);
+						return 0;
+					}
+					else
+					{
+						check_password_UI_2_0();
+						fclose(file);
+						return -1;
+					}
 				}
 			}
+			fclose(file);
 		}
-		fclose(file);
 	}
 
-	// 메모를 찾지 못한 경우
 	strcpy(memo_content, "메모를 찾지 못했습니다.");
+	return -1;
 }
 
 void change_memo(char* selected_date, int source_file)
@@ -163,21 +169,34 @@ void change_memo(char* selected_date, int source_file)
 		if (file != NULL && temp_file != NULL)
 		{
 			Entry entry;
+			int change = 0;
 			while (fscanf(file, "%[^|]|%[^|]|", entry.date, entry.content) != EOF)
 			{
 				if (strcmp(selected_date, entry.date) == 0)  // 선택된 날짜와 일치하는지 확인
 				{
-					strcpy(entry.content, new_content);  // 메모 내용 수정
+					strcpy(entry.content, new_content);  // 일기 내용 수정
+					change = 1;  // 수정 플래그 설정
 				}
-				fprintf(temp_file, "%s|%s|\n", entry.date, entry.content);  // 수정된 메모 내용을 임시 파일에 쓰기
-			}
-			fclose(file);
-			fclose(temp_file);
 
-			// 원래 파일에 수정된 내용을 덮어쓰기
+				if (change)  // 수정된 경우
+				{
+					fprintf(temp_file, "%s|%s|", entry.date, entry.content);  // 수정된 일기 내용을 임시 파일에 쓰기
+					change = 0;  // 수정 플래그 초기화
+				}
+				else  // 수정되지 않은 경우
+				{
+					fprintf(temp_file, "%s|%s|", entry.date, entry.content);  // 원래 일기 내용을 임시 파일에 쓰기
+				}
+
+				fclose(file);
+				fclose(temp_file);
+			}
+
+				// 원래 파일에 수정된 내용을 덮어쓰기
 			remove("memo.txt");
 			rename("temp.txt", "memo.txt");
 			choose_memo_UI_c();
+			
 		}
 	}
 
@@ -190,13 +209,24 @@ void change_memo(char* selected_date, int source_file)
 		if (file != NULL && temp_file != NULL)
 		{
 			Entry entry;
+			int change = 0;
 			while (fscanf(file, "%[^|]|%[^|]|%[^|]|", entry.password, entry.date, entry.content) != EOF)
 			{
 				if (strcmp(selected_date, entry.date) == 0)  // 선택된 날짜와 일치하는지 확인
 				{
-					strcpy(entry.content, new_content);  // 메모 내용 수정
+					strcpy(entry.content, new_content);  // 일기 내용 수정
+					change = 1;  // 수정 플래그 설정
 				}
-				fprintf(temp_file, "%s|%s|%s|\n", entry.password, entry.date, entry.content);  // 수정된 메모 내용을 임시 파일에 쓰기
+
+				if (change)  // 수정된 경우
+				{
+					fprintf(temp_file, "%s|%s|%s|", entry.password, entry.date, entry.content);  // 수정된 일기 내용을 임시 파일에 쓰기
+					change = 0;  // 수정 플래그 초기화
+				}
+				else  // 수정되지 않은 경우
+				{
+					fprintf(temp_file, "%s|%s|%s|", entry.password, entry.date, entry.content);  // 원래 일기 내용을 임시 파일에 쓰기
+				}
 			}
 			fclose(file);
 			fclose(temp_file);
@@ -204,7 +234,7 @@ void change_memo(char* selected_date, int source_file)
 			// 원래 파일에 수정된 내용을 덮어쓰기
 			remove("memo.txt.secure");
 			rename("temp.txt.secure", "memo.txt.secure");
-			choose_diary_UI_c();
+			choose_memo_UI_c();
 		}
 	}
 

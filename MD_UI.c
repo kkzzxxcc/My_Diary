@@ -532,6 +532,8 @@ void save_secure_UI()
 void ask_password_UI(char *password)
 {
 	int i;
+	char ch;
+	int password_ = 0;
 
 	for (i = 6; i <= 19; i++)
 	{
@@ -563,7 +565,35 @@ void ask_password_UI(char *password)
 	gotoxy(34, 14);
 	printf(">> ");
 	gotoxy(37, 14);
-	scanf("%s", password);
+
+	while (1)
+	{
+		ch = _getch();  // 키보드로부터 문자를 직접 읽어옵니다.
+		if (ch == '\r')  // Enter key
+			break;
+
+		if (ch == '\b' )  // Backspace key
+		{
+			printf("\b");
+			fputs(" ", stdout);
+			printf("\b");
+			if (password_ > 0)
+			{
+				password[--password_];
+				continue;
+			}
+		}
+		else if (ch != '\b')
+		{
+			password[password_++] = ch;
+			printf("*");  // 입력된 문자 대신 '*'를 출력합니다.
+		}
+
+	}
+	password[password_] = '\0';  // 문자열 끝에 NULL 문자를 추가합니다.
+	gotoxy(37, 14);
+
+	//scanf("%s", password);
 
 
 	gotoxy(1, 30);
@@ -618,6 +648,8 @@ void check_save_UI()
 void check_password_UI(char* password)
 {
 	int i;
+	char ch;
+	int password_ = 0;
 
 	for (i = 6; i <= 19; i++)
 	{
@@ -649,7 +681,33 @@ void check_password_UI(char* password)
 	gotoxy(34, 14);
 	printf(">> ");
 	gotoxy(37, 14);
-	scanf("%s", password);
+
+	while (1)
+	{
+		ch = _getch();  // 키보드로부터 문자를 직접 읽어옵니다.
+		if (ch == '\r')  // Enter key
+			break;
+
+		if (ch == '\b')  // Backspace key
+		{
+			printf("\b");
+			fputs(" ", stdout);
+			printf("\b");
+			if (password_ > 0)
+			{
+				password[--password_];
+				continue;
+			}
+		}
+		else if (ch != '\b')
+		{
+			password[password_++] = ch;
+			printf("*");  // 입력된 문자 대신 '*'를 출력합니다.
+		}
+
+	}
+	password[password_] = '\0';  // 문자열 끝에 NULL 문자를 추가합니다.
+	gotoxy(37, 14);
 
 
 	gotoxy(1, 30);
@@ -658,6 +716,8 @@ void check_password_UI(char* password)
 void check_password_UI_m(char* password)
 {
 	int i;
+	char ch;
+	int password_ = 0;
 
 	for (i = 6; i <= 19; i++)
 	{
@@ -689,7 +749,33 @@ void check_password_UI_m(char* password)
 	gotoxy(34, 14);
 	printf(">> ");
 	gotoxy(37, 14);
-	scanf("%s", password);
+
+	while (1)
+	{
+		ch = _getch();  // 키보드로부터 문자를 직접 읽어옵니다.
+		if (ch == '\r')  // Enter key
+			break;
+
+		if (ch == '\b')  // Backspace key
+		{
+			printf("\b");
+			fputs(" ", stdout);
+			printf("\b");
+			if (password_ > 0)
+			{
+				password[--password_];
+				continue;
+			}
+		}
+		else if (ch != '\b')
+		{
+			password[password_++] = ch;
+			printf("*");  // 입력된 문자 대신 '*'를 출력합니다.
+		}
+
+	}
+	password[password_] = '\0';  // 문자열 끝에 NULL 문자를 추가합니다.
+	gotoxy(37, 14);
 
 
 	gotoxy(1, 30);

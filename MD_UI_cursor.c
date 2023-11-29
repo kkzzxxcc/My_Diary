@@ -304,7 +304,7 @@ void choose_diary_UI_c()
         gotoxy(8, 8 + selected_index % 17);
         printf(">>");
         gotoxy(8, 25);
-        printf(">>> %s", dates);
+        printf(">>> %s", dates[selected_index]);
 
         // 키보드 입력 확인
         ch = _getch();
@@ -352,7 +352,7 @@ void choose_memo_UI_c()
     char memo_content[MAX_LEN];
 
     // 메모의 출처를 저장하는 변수 추가
-    int source_file[100];  // 0: 일반 파일, 1: 보안 파일
+    int source_file[100] = { 0 };  // 0: 일반 파일, 1: 보안 파일
 
     // 일반 파일에서 날짜 가져오기
     FILE* file = fopen("memo.txt", "rb");
@@ -814,7 +814,7 @@ void search_memo_UI_c()
 
 
 // 날짜를 최근순으로 정렬해주기위해 날짜 문자열을 숫자로 변환하여 크기를 비교하여 가장 큰 숫자가 최근이 된다.
-// 구현하기 쉬운 버블정렬을 사용, 효율은 별로지만 일기 날짜 정렬은 간단하기 때문에 성능 최적화가 따로 필요없기 때문에 버블을 사용
+// 구현하기 쉬운 버블정렬을 사용, 효율은 별로지만 일기 날짜 정렬은 간단하기 때문에  버블을 사용
 void sort_dates(char dates[100][11], int date_count)
 {
     int i, j;

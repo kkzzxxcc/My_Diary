@@ -22,7 +22,7 @@ void show_memo_UI(char* selected_date, char* memo_content, int* source_file);
 int show_diary(const char* date, char* content);
 int show_memo(const char* date, char* content);
 
-void sort_dates(char dates[100][11], int date_count);
+void sort_dates(char dates[100][11], int date_count, int* source_file);
 void ask_secure_UI(int cur_x);
 void ask_password_UI(char* password);
 void save_secure_UI();
@@ -284,7 +284,7 @@ void choose_diary_UI_c()
     }
 
     // 날짜를 최근 순으로 정렬
-    sort_dates(dates, date_count);
+    sort_dates(dates, date_count, source_file);
 
     // 키보드로 날짜 선택
     while (1)
@@ -384,7 +384,7 @@ void choose_memo_UI_c()
         fclose(file);
     }
 
-    sort_dates(dates, date_count);
+    sort_dates(dates, date_count, source_file);
 
     // 키보드로 날짜 선택
     while (1)
@@ -510,6 +510,11 @@ void show_diary_UI(char* selected_date, char* diary_content, int* source_file)
             choose_diary_UI_c(); // 날짜 선택으로 돌아감
             break;  // 'q' 또는 'Q'를 누르면 루프 종료
         }
+        if (ch == 'w' || ch == 'W')
+        {
+            MD_main_test();
+            break;
+        }
 
     }
 
@@ -587,6 +592,12 @@ void show_memo_UI(char* selected_date, char* memo_content, int* source_file)
             break;  // 'q' 또는 'Q'를 누르면 루프 종료
         }
 
+        if (ch == 'w' || ch == 'W')
+        {
+            MD_main_test();
+            break;
+        }
+
     }
 
 
@@ -648,7 +659,7 @@ void search_diary_UI_c()
         fclose(file);
     }
 
-    sort_dates(dates, date_count);
+    sort_dates(dates, date_count, source_file);
 
     // 키보드로 날짜 선택
     while (1)
@@ -756,7 +767,7 @@ void search_memo_UI_c()
         fclose(file);
     }
 
-    sort_dates(dates, memo_count);
+    sort_dates(dates, memo_count, source_file);
 
     // 키보드로 날짜 선택
     while (1)
@@ -804,8 +815,10 @@ void search_memo_UI_c()
 
         if (ch == 'q' || ch == 'Q')
         {
+            search_memo_UI(keyword);
             break;  // 'q' 또는 'Q'를 누르면 루프 종료
         }
+
 
         Sleep(100);  // CPU 사용량을 줄이기 위해 일시 정지
     }
@@ -815,7 +828,7 @@ void search_memo_UI_c()
 
 // 날짜를 최근순으로 정렬해주기위해 날짜 문자열을 숫자로 변환하여 크기를 비교하여 가장 큰 숫자가 최근이 된다.
 // 구현하기 쉬운 버블정렬을 사용, 효율은 별로지만 일기 날짜 정렬은 간단하기 때문에  버블을 사용
-void sort_dates(char dates[100][11], int date_count)
+void sort_dates(char dates[100][11], int date_count, int* source_file) // source_file 추가
 {
     int i, j;
     for (i = 0; i < date_count - 1; i++)
@@ -838,10 +851,16 @@ void sort_dates(char dates[100][11], int date_count)
                 strcpy(temp, dates[j]);
                 strcpy(dates[j], dates[j + 1]);
                 strcpy(dates[j + 1], temp);
+
+                // source_file 값도 동시에 교환
+                int temp_source = source_file[j];
+                source_file[j] = source_file[j + 1];
+                source_file[j + 1] = temp_source;
             }
         }
     }
 }
+
 
 
 

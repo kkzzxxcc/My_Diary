@@ -95,7 +95,7 @@ int show_diary(const char* date, char* diary_content, int* source_file)
                     fclose(file);
                     return;
                 }
-            }
+            } 
             fclose(file);
         }
     }
@@ -244,7 +244,7 @@ void change_diary(char* selected_date, int source_file)
 
                     if (change)  // 수정된 경우
                     {
-                        fprintf(temp_file, "%s|%s|", entry.date, entry.content);  // 수정된 일기 내용을 임시 파일에 쓰기
+                        fprintf(temp_file, "%s|%s|", entry.date, new_content);  // 수정된 일기 내용을 임시 파일에 쓰기
                         change = 0;  // 수정 플래그 초기화
                     }
                     else  // 수정되지 않은 경우
@@ -279,7 +279,7 @@ void change_diary(char* selected_date, int source_file)
 
                 if (change)  // 수정된 경우
                 {
-                    fprintf(temp_file, "%s|%s|%s|", entry.password, entry.date, entry.content);  // 수정된 일기 내용을 임시 파일에 쓰기
+                    fprintf(temp_file, "%s|%s|%s|", entry.password, entry.date, new_content);  // 수정된 일기 내용을 임시 파일에 쓰기
                     change = 0;  // 수정 플래그 초기화
                 }
                 else  // 수정되지 않은 경우

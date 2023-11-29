@@ -180,7 +180,7 @@ void change_memo(char* selected_date, int source_file)
 
 				if (change)  // 수정된 경우
 				{
-					fprintf(temp_file, "%s|%s|", entry.date, entry.content);  // 수정된 일기 내용을 임시 파일에 쓰기
+					fprintf(temp_file, "%s|%s|", entry.date, new_content);  // 수정된 일기 내용을 임시 파일에 쓰기
 					change = 0;  // 수정 플래그 초기화
 				}
 				else  // 수정되지 않은 경우
@@ -215,15 +215,15 @@ void change_memo(char* selected_date, int source_file)
 				if (strcmp(selected_date, entry.date) == 0)  // 선택된 날짜와 일치하는지 확인
 				{
 					strcpy(entry.content, new_content);  // 일기 내용 수정
-					change = 1;  // 수정 플래그 설정
+					change = 1;  // 수정값
 				}
 
 				if (change)  // 수정된 경우
 				{
-					fprintf(temp_file, "%s|%s|%s|", entry.password, entry.date, entry.content);  // 수정된 일기 내용을 임시 파일에 쓰기
-					change = 0;  // 수정 플래그 초기화
+					fprintf(temp_file, "%s|%s|%s|", entry.password, entry.date, new_content);  // 수정된 일기 내용을 임시 파일에 쓰기
+					change = 0;  // 수정값 초기화
 				}
-				else  // 수정되지 않은 경우
+				else 
 				{
 					fprintf(temp_file, "%s|%s|%s|", entry.password, entry.date, entry.content);  // 원래 일기 내용을 임시 파일에 쓰기
 				}

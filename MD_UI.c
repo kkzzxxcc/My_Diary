@@ -56,22 +56,29 @@ void MD_main_UI()
 
 }
 
-void print_calendar_ui_t1() {
+// 달력
+void print_calendar_ui_t1() 
+{
 	int i, j, date = 1;
 	printf("┏━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┓");
 
-	for (i = 0; i < 5; i++) {
-		for (j = 0; j < 7; j++) {
-			if (date <= 31) {
+	for (i = 0; i < 5; i++) 
+	{
+		for (j = 0; j < 7; j++) 
+		{
+			if (date <= 31) 
+			{
 				printf("┃  %2d   ", date);
 				date++;
 			}
-			else {
+			else 
+			{
 				printf("┃       ");
 			}
 		}
 		printf("┃");
-		if (i != 4) {
+		if (i != 4) 
+		{
 			printf("┣━━━━━━━╋━━━━━━━╋━━━━━━━╋━━━━━━━╋━━━━━━━╋━━━━━━━╋━━━━━━━┫");
 		}
 	}
@@ -150,7 +157,6 @@ void MD_main_UI_c(int cur_y)
 	
 	gotoxy(1, 30);*/
 
-	// '달력 보기'와 '종료'에 대해 현재 선택된 항목을 표시
 	gotoxy(13, 14);
 	if (cur_y == 0)
 		printf("> 1. 달력 보기");
@@ -253,14 +259,14 @@ void write_diary_UI()
 	printf("일기 작성중 >> ");
 
 	// 일기 내용 입력받기
-	Entry diary_entry; // 구조체 선언
+	Entry diary_entry; 
 	strcpy(diary_entry.date, select_date);  // 선택된 날짜 설정
-	char line[101];  // 한 줄의 일기 내용을 임시 저장할 변수
+	char line[101];  // 한 줄씩 저장
 
 	for (i = 0; i < 27; i++) 
 	{  
-		gotoxy(20, 8 + i);  // 새로운 줄의 시작 좌표 설정
-		fgets(line, 101, stdin);  // 한 줄의 일기 내용을 임시 변수에 저장
+		gotoxy(20, 8 + i);  
+		fgets(line, 101, stdin);  // 한 줄식 저장
 
 		// 엔터를 두 번 입력하면 일기 작성 종료
 		if (strcmp(line, "\n") == 0) 
@@ -268,13 +274,11 @@ void write_diary_UI()
 			break;
 		}
 
-		strcpy(&diary_entry.content[j], line);  // 임시 변수의 내용을 diary_entry.content에 복사
+		strcpy(&diary_entry.content[j], line);  // diary_entry.content에 복사
 		j += strlen(line);  // 다음 줄의 시작 위치로 이동 j에 라인 배열의 문자열을 더해서 저장
 	}
 
 
-
-	//fgets(diary_entry.content, sizeof(diary_entry.content), stdin);
 
 	// 일기 내용을 파일에 쓰기
 	write_entry(&diary_entry, "diary.txt");
@@ -319,12 +323,12 @@ void write_memo_UI()
 	// 메모 내용 입력받기
 	Entry memo_entry;
 	strcpy(memo_entry.date, select_date);  // 선택된 날짜 설정
-	char line[101];  // 한 줄의 일기 내용을 임시 저장할 변수
+	char line[101];  // 한 줄씩 저장
 
 	for (i = 0; i < 27; i++) 
 	{  
-		gotoxy(20, 8 + i);  // 새로운 줄의 시작 좌표 설정
-		fgets(line, 101, stdin);  // 한 줄의 메모 내용을 임시 변수에 저장
+		gotoxy(20, 8 + i); 
+		fgets(line, 101, stdin);  // 한 줄씩 저장
 
 		// 엔터를 두 번 입력하면 메모 작성 종료
 		if (strcmp(line, "\n") == 0)
@@ -332,15 +336,14 @@ void write_memo_UI()
 			break;
 		}
 
-		strcpy(&memo_entry.content[j], line);  // 임시 변수의 내용을 memo_entry.content에 복사
+		strcpy(&memo_entry.content[j], line);  // memo_entry.content에 복사
 		j += strlen(line);  
 	}
 
 
 
-	//fgets(diary_entry.content, sizeof(diary_entry.content), stdin);
 
-	// 일기 내용을 파일에 쓰기
+	// 메모 내용을 파일에 쓰기
 	write_entry(&memo_entry, "memo.txt");
 
 	gotoxy(1, 30);
@@ -380,23 +383,13 @@ void ask_secure_UI(int cur_x)
 	gotoxy(34, 10);
 	printf("보안 하시겠습니까?");
 
-	// 현재 선택 위치에 따라 강조 표시
+
 	gotoxy(30, 16);
 	printf(cur_x == 0 ? "[ 예 ]" : "  예 ");
 	gotoxy(51, 16);
 	printf(cur_x == 1 ? "[ 아니오 ]" : "  아니오 ");
 
-	/*
-	gotoxy(80, 20);
-	printf("3");
-	Sleep(1000);
-	gotoxy(80, 20);
-	printf("2");
-	Sleep(1000);
-	gotoxy(80, 20);
-	printf("1");
-	Sleep(1000);
-	*/
+
 
 	gotoxy(1, 30);
 
@@ -470,13 +463,7 @@ void choose_memo_UI()
 	gotoxy(37, 2);
 	printf("보고싶은 메모의 날짜를 선택해주세요.");
 
-	/*
-	gotoxy(8, 8);
-	printf(">>");
 
-	gotoxy(8, 25);
-	printf(">>>");
-	*/
 
 	gotoxy(1, 30);
 
@@ -568,7 +555,7 @@ void ask_password_UI(char *password)
 
 	while (1)
 	{
-		ch = _getch();  // 키보드로부터 문자를 직접 읽어옵니다.
+		ch = _getch();  
 		if (ch == '\r')  // Enter key
 			break;
 
@@ -586,11 +573,11 @@ void ask_password_UI(char *password)
 		else if (ch != '\b')
 		{
 			password[password_++] = ch;
-			printf("*");  // 입력된 문자 대신 '*'를 출력합니다.
+			printf("*");  // *로 출력
 		}
 
 	}
-	password[password_] = '\0';  // 문자열 끝에 NULL 문자를 추가합니다.
+	password[password_] = '\0';  // 문자열 끝에 NULL 문자 추가
 	gotoxy(37, 14);
 
 	//scanf("%s", password);
@@ -684,7 +671,7 @@ void check_password_UI(char* password)
 
 	while (1)
 	{
-		ch = _getch();  // 키보드로부터 문자를 직접 읽어옵니다.
+		ch = _getch(); 
 		if (ch == '\r')  // Enter key
 			break;
 
@@ -702,11 +689,11 @@ void check_password_UI(char* password)
 		else if (ch != '\b')
 		{
 			password[password_++] = ch;
-			printf("*");  // 입력된 문자 대신 '*'를 출력합니다.
+			printf("*");  
 		}
 
 	}
-	password[password_] = '\0';  // 문자열 끝에 NULL 문자를 추가합니다.
+	password[password_] = '\0'; 
 	gotoxy(37, 14);
 
 
@@ -752,7 +739,7 @@ void check_password_UI_m(char* password)
 
 	while (1)
 	{
-		ch = _getch();  // 키보드로부터 문자를 직접 읽어옵니다.
+		ch = _getch();  
 		if (ch == '\r')  // Enter key
 			break;
 
@@ -770,12 +757,11 @@ void check_password_UI_m(char* password)
 		else if (ch != '\b')
 		{
 			password[password_++] = ch;
-			printf("*");  // 입력된 문자 대신 '*'를 출력합니다.
+			printf("*"); 
 		}
 
 	}
-	password[password_] = '\0';  // 문자열 끝에 NULL 문자를 추가합니다.
-	gotoxy(37, 14);
+	password[password_] = '\0'; 
 
 
 	gotoxy(1, 30);
@@ -894,13 +880,7 @@ void search_diary_UI(char* keyword)
 	gotoxy(45, 3);
 	printf("키워드 : %s", keyword);
 
-	/*
-	gotoxy(8, 8);
-	printf(">>");
 
-	gotoxy(8, 25);
-	printf(">>>");
-	*/
 
 	gotoxy(1, 30);
 
@@ -936,13 +916,7 @@ void search_memo_UI(char *keyword)
 	gotoxy(45, 3);
 	printf("키워드 : %s", keyword);
 
-	/*
-	gotoxy(8, 8);
-	printf(">>");
 
-	gotoxy(8, 25);
-	printf(">>>");
-	*/
 
 	gotoxy(1, 30);
 

@@ -25,20 +25,21 @@ void write_entry(Entry* entry, const char* filename)
 
     while (1)
     {
-        ask_secure_UI(cur_x);  // 보안 UI에 현재 선택 위치 전달
+        ask_secure_UI(cur_x);  
 
         ch = _getch();
-        switch (ch) {
-        case 75:  // LEFT
-            cur_x = cur_x - 1 >= 0 ? cur_x - 1 : 0;
-            break;
-        case 77:  // RIGHT
-            cur_x = cur_x + 1 <= 1 ? cur_x + 1 : 1;
-            break;
+        switch (ch) 
+        {
+            case 75:  // LEFT
+                cur_x = cur_x - 1 >= 0 ? cur_x - 1 : 0;
+                break;
+            case 77:  // RIGHT
+                cur_x = cur_x + 1 <= 1 ? cur_x + 1 : 1;
+                break;
 
-        case '\r':  // Enter key
-            secure = cur_x == 0 ? 1 : 0;  // 현재 선택 위치가 보안 여부
-            break;
+            case '\r':  // Enter key
+                secure = cur_x == 0 ? 1 : 0;  
+                break;
         }
 
         if (ch == '\r')
@@ -58,7 +59,7 @@ void write_entry(Entry* entry, const char* filename)
     else
     {
         FILE* file = fopen(filename, "ab"); // 'ab' 모드로 오픈 파일이 이미 있다면 이어쓰기 가능
-        // 한글 문자열을 제대로 사용하기 위해 텍스트 모드가 아닌 바이너리 모드 사용
+        
 
         if (file != NULL)
         {
@@ -221,7 +222,7 @@ void change_diary(char* selected_date, int source_file)
     printf("새로운 일기 내용을 입력하세요>> ");
     fgets(new_content, MAX_LEN, stdin);
 
-    // fgets 함수는 문자열 끝에 '' 문자를 포함시키므로 이를 제거합니다.
+    // fgets 함수는 문자열 끝에 '' 문자를 포함시키므로 제거
     int len = strlen(new_content);
     if (new_content[len - 1] == ' ') 
         new_content[len - 1] = '\0';
@@ -239,13 +240,13 @@ void change_diary(char* selected_date, int source_file)
                     if (strcmp(selected_date, entry.date) == 0)  // 선택된 날짜와 일치하는지 확인
                     {
                         strcpy(entry.content, new_content);  // 일기 내용 수정
-                        change = 1;  // 수정 플래그 설정
+                        change = 1;  // 수정값
                     }
 
                     if (change)  // 수정된 경우
                     {
                         fprintf(temp_file, "%s|%s|", entry.date, new_content);  // 수정된 일기 내용을 임시 파일에 쓰기
-                        change = 0;  // 수정 플래그 초기화
+                        change = 0;  // 수정값 초기화
                     }
                     else  // 수정되지 않은 경우
                     {
@@ -270,17 +271,17 @@ void change_diary(char* selected_date, int source_file)
             int change = 0;
             while (fscanf(file, "%[^|]|%[^|]|%[^|]|", entry.password, entry.date, entry.content) != EOF)
             {
-                //fscanf(file, "%[^|]|%[^|]|%[^|]|", entry.password, entry.date, entry.content);
+
                 if (strcmp(selected_date, entry.date) == 0)  // 선택된 날짜와 일치하는지 확인
                 {
                     strcpy(entry.content, new_content);  // 일기 내용 수정
-                    change = 1;  // 수정 플래그 설정
+                    change = 1;  // 수정값
                 }
 
                 if (change)  // 수정된 경우
                 {
                     fprintf(temp_file, "%s|%s|%s|", entry.password, entry.date, new_content);  // 수정된 일기 내용을 임시 파일에 쓰기
-                    change = 0;  // 수정 플래그 초기화
+                    change = 0;  // 수정값 초기화
                 }
                 else  // 수정되지 않은 경우
                 {

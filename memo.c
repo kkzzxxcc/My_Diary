@@ -42,24 +42,25 @@ void write_memo(Entry* entry, const char* filename)
 
     while (1)
     {
-        ask_secure_UI(cur_x);  // 보안 UI에 현재 선택 위치 전달
+        ask_secure_UI(cur_x);  
 
         ch = _getch();
-        switch (ch) {
-        case 75:  // LEFT
-            cur_x = cur_x - 1 >= 0 ? cur_x - 1 : 0;
-            break;
-        case 77:  // RIGHT
-            cur_x = cur_x + 1 <= 1 ? cur_x + 1 : 1;
-            break;
+        switch (ch) 
+		{
+			case 75:  // LEFT
+				cur_x = cur_x - 1 >= 0 ? cur_x - 1 : 0;
+				break;
+			case 77:  // RIGHT
+				cur_x = cur_x + 1 <= 1 ? cur_x + 1 : 1;
+				break;
 
-        case '\r':  // Enter key
-            secure = cur_x == 0 ? 1 : 0;  // 현재 선택 위치가 보안 여부
-            break;
+			case '\r':  // Enter key
+				secure = cur_x == 0 ? 1 : 0;  
+				break;
         }
 
         if (ch == '\r')
-            break;  // 엔터를 누르면 루프 종료
+            break;  
     }
 
     if (secure)
@@ -75,13 +76,12 @@ void write_memo(Entry* entry, const char* filename)
     else
     {
         FILE* file = fopen(filename, "ab"); // 'ab' 모드로 오픈 파일이 이미 있다면 이어쓰기 가능
-        // 한글 문자열을 제대로 사용하기 위해 텍스트 모드가 아닌 바이너리 모드 사용
 
         if (file != NULL)
         {
             fprintf(file, "%s|%s|", entry->date, entry->content); // '|' 문자로 날짜와 내용을 구분
 
-            fclose(file); // 파일 닫기
+            fclose(file); 
 
             printf("메모가 저장되었습니다.");
         }
@@ -161,6 +161,10 @@ void change_memo(char* selected_date, int source_file)
 	printf("새로운 메모 내용을 입력하세요>> ");
 	fgets(new_content, MAX_LEN, stdin);
 
+	int len = strlen(new_content);
+	if (new_content[len - 1] == ' ')
+		new_content[len - 1] = '\0';
+
 	if (source_file == 0)
 	{
 		// 일반 파일에서 일기 내용 수정하기
@@ -175,13 +179,13 @@ void change_memo(char* selected_date, int source_file)
 				if (strcmp(selected_date, entry.date) == 0)  // 선택된 날짜와 일치하는지 확인
 				{
 					strcpy(entry.content, new_content);  // 일기 내용 수정
-					change = 1;  // 수정 플래그 설정
+					change = 1;  // 수정값
 				}
 
 				if (change)  // 수정된 경우
 				{
 					fprintf(temp_file, "%s|%s|", entry.date, new_content);  // 수정된 일기 내용을 임시 파일에 쓰기
-					change = 0;  // 수정 플래그 초기화
+					change = 0;  // 수정깂 초기화
 				}
 				else  // 수정되지 않은 경우
 				{
@@ -192,7 +196,7 @@ void change_memo(char* selected_date, int source_file)
 				fclose(temp_file);
 			}
 
-				// 원래 파일에 수정된 내용을 덮어쓰기
+			// 원래 파일에 수정된 내용을 덮어쓰기
 			remove("memo.txt");
 			rename("temp.txt", "memo.txt");
 			choose_memo_UI_c();

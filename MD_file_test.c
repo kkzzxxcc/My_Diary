@@ -81,7 +81,7 @@ void write_test()
 
     Entry diary_entry;
 
-    strcpy(diary_entry.date, select_date);  // 선택된 날짜 설정
+    strcpy(diary_entry.date, select_date);  // 선택된 날짜
 
     printf("일기 내용을 입력하세요 : ");
     fgets(diary_entry.content, sizeof(diary_entry.content), stdin);
@@ -96,7 +96,7 @@ void write_test()
         tm.tm_hour, tm.tm_min, tm.tm_sec);
     strcat(diary_entry.content, current_time);
 
-    write_entry(&diary_entry, "diary.txt");  //"diary.txt"라는 이름의 텍스트파일에 일기 저장
+    write_entry(&diary_entry, "diary.txt");  
 
     /*
     char answer;

@@ -47,6 +47,7 @@ void gotoxy_c(int x, int y)
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
 
+// 달력 그리기 커서
 void print_calendar_ui(int cur_y, int cur_x) 
 {
     system("cls");
@@ -109,12 +110,12 @@ void MD_main_test()
 
         case '\r':  // Enter key
             if (cur_y == 0)
-                main_cursor_test(); // 커서 위치에 따라 날짜 선택화면으로 이동
+                main_cursor_test(); // 날짜 선택화면으로 이동
             else if (cur_y == 1)
-                search_diary_UI_c(); // 커서 위치에 따라 일기 검색하기로 이동
+                search_diary_UI_c(); // 일기 검색하기로 이동
             else if (cur_y == 2)
-                search_memo_UI_c(); // 커서 위치에 따라 메모 검색하기로 이동
-            else if (cur_y == 3) // 커서 위치에 따라 프로그램 종료
+                search_memo_UI_c(); // 메모 검색하기로 이동
+            else if (cur_y == 3) // 프로그램 종료
             {
                 exit_UI();
                 exit(0);
@@ -126,7 +127,7 @@ void MD_main_test()
         if (ch == 'q' || ch == 'Q') 
         {
             exit_UI();
-            break;  // 'q' 또는 'Q'를 누르면 루프 종료
+            break;  
         }
     }
 
@@ -211,8 +212,8 @@ void main_choose_test()
         
         if (ch == 'q' || ch == 'Q')
         {
-            MD_main_test(); // 메인화면으로 돌아가기
-            break;  // 'q' 또는 'Q'를 누르면 루프 종료
+            MD_main_test(); 
+            break; 
         }
             
     }
@@ -306,7 +307,7 @@ void choose_diary_UI_c()
         gotoxy(8, 25);
         printf(">>> %s", dates[selected_index]);
 
-        // 키보드 입력 확인
+        
         ch = _getch();
         switch (ch)
         {
@@ -336,10 +337,10 @@ void choose_diary_UI_c()
         if (ch == 'q' || ch == 'Q')
         {
             main_choose_test(); // 메뉴 선택화면으로 돌아감
-            break;  // 'q' 또는 'Q'를 누르면 루프 종료
+            break;  
         }
 
-        Sleep(100);  // CPU 사용량을 줄이기 위해 일시 정지
+        Sleep(100);  
     }
 }
 
@@ -351,7 +352,7 @@ void choose_memo_UI_c()
     int ch;
     char memo_content[MAX_LEN];
 
-    // 메모의 출처를 저장하는 변수 추가
+   
     int source_file[100] = { 0 };  // 0: 일반 파일, 1: 보안 파일
 
     // 일반 파일에서 날짜 가져오기
@@ -386,7 +387,7 @@ void choose_memo_UI_c()
 
     sort_dates(dates, date_count, source_file);
 
-    // 키보드로 날짜 선택
+    
     while (1)
     {
         // 메모 선택 ui
@@ -425,7 +426,7 @@ void choose_memo_UI_c()
                 show_memo_UI(dates[selected_index], memo_content, &source_file[selected_index]);
                 return;
             }
-            // 비밀번호가 틀렸을 경우, 다시 날짜 선택 화면으로 돌아갑니다.
+            
             break;
         }
         }
@@ -433,10 +434,10 @@ void choose_memo_UI_c()
         if (ch == 'q' || ch == 'Q')
         {
             main_choose_test(); // 메뉴 선택화면으로 돌아감
-            break;  // 'q' 또는 'Q'를 누르면 루프 종료
+            break; 
         }
 
-        Sleep(100);  // CPU 사용량을 줄이기 위해 일시 정지
+        Sleep(100); 
     }
 }
 
@@ -473,7 +474,7 @@ void show_diary_UI(char* selected_date, char* diary_content, int* source_file)
     gotoxy(8, 8);
     printf(">> %s", diary_content);
 
-    // 키보드로 명령 선택
+    
     while (1)
     {
         gotoxy(21, 25);
@@ -494,12 +495,12 @@ void show_diary_UI(char* selected_date, char* diary_content, int* source_file)
         case '\r':  // Enter key
             if (cur_x == 0)
             {
-                // 수정하기          일반파일인지 보안파일인지 값을 넘겨줌
+                // 수정          일반파일인지 보안파일인지 값을 넘겨줌
                 change_diary(selected_date, *source_file);
             }
             else
             {
-                // 삭제하기          일반파일인지 보안파일인지 값을 넘겨줌
+                // 삭제          일반파일인지 보안파일인지 값을 넘겨줌
                 delete_diary(selected_date, *source_file);
             }
             return;
@@ -508,7 +509,7 @@ void show_diary_UI(char* selected_date, char* diary_content, int* source_file)
         if (ch == 'q' || ch == 'Q')
         {
             choose_diary_UI_c(); // 날짜 선택으로 돌아감
-            break;  // 'q' 또는 'Q'를 누르면 루프 종료
+            break;  
         }
         if (ch == 'w' || ch == 'W')
         {
@@ -555,7 +556,7 @@ void show_memo_UI(char* selected_date, char* memo_content, int* source_file)
     gotoxy(8, 8);
     printf(">> %s", memo_content);
 
-    // 키보드로 명령 선택
+   
     while (1)
     {
         gotoxy(21, 25);
@@ -576,12 +577,12 @@ void show_memo_UI(char* selected_date, char* memo_content, int* source_file)
         case '\r':  // Enter key
             if (cur_x == 0)
             {
-                // 수정하기
+                // 수정
                 change_memo(selected_date, *source_file);
             }
             else
             {
-                // 삭제하기
+                // 삭제
                 delete_memo(selected_date, *source_file);
             }
             return;
@@ -589,7 +590,7 @@ void show_memo_UI(char* selected_date, char* memo_content, int* source_file)
         if (ch == 'q' || ch == 'Q')
         {
             choose_memo_UI_c(); // 메모 날짜 선택화면으로 돌아감
-            break;  // 'q' 또는 'Q'를 누르면 루프 종료
+            break;  
         }
 
         if (ch == 'w' || ch == 'W')
@@ -614,7 +615,8 @@ void search_diary_UI_c()
 
     // fgets 함수는 문자열 끝에 ' ' 문자를 포함시키므로 제거
     int len = strlen(keyword);
-    if (keyword[len - 1] == ' ') keyword[len - 1] = '\0';
+    if (keyword[len - 1] == ' ') 
+        keyword[len - 1] = '\0';
 
     char dates[100][11] = { 0 }; // 일기 날짜를 저장할 배열
     int date_count = 0;  // 일기 날짜 개수
@@ -622,8 +624,8 @@ void search_diary_UI_c()
     int ch;
     char diary_content[MAX_LEN];
 
-    // 일기의 출처를 저장하는 변수 추가
-    int source_file[100] = { 0 };  // 0: 일반 파일, 1: 보안 파일
+    
+    int source_file[100] = { 0 };  
 
     // 일반 파일에서 검색
     FILE * file = fopen("diary.txt", "rb");
@@ -632,7 +634,7 @@ void search_diary_UI_c()
         Entry entry;
         while (fscanf(file, "%[^|]|%[^|]|", entry.date, entry.content) != EOF)
         {
-            if (strstr(entry.content, keyword) != NULL)  // 일기 내용에 키워드가 포함되어 있는지 확인
+            if (strstr(entry.content, keyword) != NULL)  // 일기 내용에 키워드 검사
             {
                 strcpy(dates[date_count], entry.date);  // 날짜 저장
                 source_file[date_count] = 0;  // 일반파일 출처 저장
@@ -649,7 +651,7 @@ void search_diary_UI_c()
         Entry entry;
         while (fscanf(file, "%[^|]|%[^|]|%[^|]|", entry.password, entry.date, entry.content) != EOF)
         {
-            if (strstr(entry.content, keyword) != NULL)  // 일기 내용에 키워드가 포함되어 있는지 확인
+            if (strstr(entry.content, keyword) != NULL)  // 일기 내용에 키워드 검사
             {
                 strcpy(dates[date_count], entry.date);  // 날짜 저장
                 source_file[date_count] = 1;  // 보안파일 출처 저장
@@ -661,7 +663,7 @@ void search_diary_UI_c()
 
     sort_dates(dates, date_count, source_file);
 
-    // 키보드로 날짜 선택
+    
     while (1)
     {
         // 검색 ui호출
@@ -681,7 +683,7 @@ void search_diary_UI_c()
         gotoxy(8, 25);
         printf(">>> %s", dates[selected_index]);
 
-        // 키보드 입력 확인
+        
         ch = _getch();
         switch (ch)
         {
@@ -707,10 +709,10 @@ void search_diary_UI_c()
 
         if (ch == 'q' || ch == 'Q')
         {
-            break;  // 'q' 또는 'Q'를 누르면 루프 종료
+            break;  
         }
 
-        Sleep(100);  // CPU 사용량을 줄이기 위해 일시 정지
+        Sleep(100);  
     }
 }
 
@@ -722,7 +724,8 @@ void search_memo_UI_c()
 
     // fgets 함수는 문자열 끝에 ' ' 문자를 포함시키므로 제거
     int len = strlen(keyword);
-    if (keyword[len - 1] == ' ') keyword[len - 1] = '\0';
+    if (keyword[len - 1] == ' ') 
+        keyword[len - 1] = '\0';
 
     char dates[100][11] = { 0 }; // 메모 날짜를 저장할 배열
     int memo_count = 0;  // 메모 날짜 개수
@@ -730,7 +733,7 @@ void search_memo_UI_c()
     int ch;
     char memo_content[MAX_LEN];
 
-    // 메모의 출처를 저장하는 변수
+    
     int source_file[100] = { 0 };  // 0: 일반 파일, 1: 보안 파일
 
     // 일반 파일에서 검색
@@ -740,7 +743,7 @@ void search_memo_UI_c()
         Entry entry;
         while (fscanf(file, "%[^|]|%[^|]|", entry.date, entry.content) != EOF)
         {
-            if (strstr(entry.content, keyword) != NULL)  // 메모 내용에 키워드가 포함되어 있는지 확인
+            if (strstr(entry.content, keyword) != NULL)  
             {
                 strcpy(dates[memo_count], entry.date);  // 날짜 저장
                 source_file[memo_count] = 0;  // 일반파일 출처 저장
@@ -757,7 +760,7 @@ void search_memo_UI_c()
         Entry entry;
         while (fscanf(file, "%[^|]|%[^|]|%[^|]|", entry.password, entry.date, entry.content) != EOF)
         {
-            if (strstr(entry.content, keyword) != NULL)  // 일기 내용에 키워드가 포함되어 있는지 확인
+            if (strstr(entry.content, keyword) != NULL)  
             {
                 strcpy(dates[memo_count], entry.date);  // 날짜 저장
                 source_file[memo_count] = 1;  // 보안파일 출처 저장
@@ -769,7 +772,7 @@ void search_memo_UI_c()
 
     sort_dates(dates, memo_count, source_file);
 
-    // 키보드로 날짜 선택
+ 
     while (1)
     {
         // 메모 검색 ui
@@ -789,7 +792,7 @@ void search_memo_UI_c()
         gotoxy(8, 25);
         printf(">>> %s", dates[selected_index]);
 
-        // 키보드 입력 확인
+       
         ch = _getch();
         switch (ch)
         {
@@ -808,7 +811,7 @@ void search_memo_UI_c()
                 show_memo_UI(dates[selected_index], memo_content, &source_file[selected_index]);
                 return;
             }
-            // 비밀번호가 틀렸을 경우, 다시 날짜 선택 화면으로 돌아갑니다.
+           
             break;
         }
         }
@@ -816,11 +819,11 @@ void search_memo_UI_c()
         if (ch == 'q' || ch == 'Q')
         {
             search_memo_UI(keyword);
-            break;  // 'q' 또는 'Q'를 누르면 루프 종료
+            break;  
         }
 
 
-        Sleep(100);  // CPU 사용량을 줄이기 위해 일시 정지
+        Sleep(100);  
     }
 }
 
@@ -828,7 +831,7 @@ void search_memo_UI_c()
 
 // 날짜를 최근순으로 정렬해주기위해 날짜 문자열을 숫자로 변환하여 크기를 비교하여 가장 큰 숫자가 최근이 된다.
 // 구현하기 쉬운 버블정렬을 사용, 효율은 별로지만 일기 날짜 정렬은 간단하기 때문에  버블을 사용
-void sort_dates(char dates[100][11], int date_count, int* source_file) // source_file 추가
+void sort_dates(char dates[100][11], int date_count, int* source_file) 
 {
     int i, j;
     for (i = 0; i < date_count - 1; i++)
@@ -836,26 +839,26 @@ void sort_dates(char dates[100][11], int date_count, int* source_file) // source
         for (j = 0; j < date_count - i - 1; j++)
         {
             // 날짜를 숫자로 변환
-            int year1, month1, day1, date_num1;
-            sscanf(dates[j], "%d-%d-%d", &year1, &month1, &day1);
-            date_num1 = year1 * 10000 + month1 * 100 + day1;
+            int year1, mon1, d1, d_num1;
+            sscanf(dates[j], "%d-%d-%d", &year1, &mon1, &d1);
+            d_num1 = year1 * 10000 + mon1 * 100 + d1;
 
-            int year2, month2, day2, date_num2;
-            sscanf(dates[j + 1], "%d-%d-%d", &year2, &month2, &day2);
-            date_num2 = year2 * 10000 + month2 * 100 + day2;
+            int year2, mon2, d2, d_num2;
+            sscanf(dates[j + 1], "%d-%d-%d", &year2, &mon2, &d2);
+            d_num2 = year2 * 10000 + mon2 * 100 + d2;
 
             // 날짜 비교 및 교환
-            if (date_num1 < date_num2)
+            if (d_num1 < d_num2)
             {
                 char temp[12];  // 'temp' 변수의 크기를 12로 설정
                 strcpy(temp, dates[j]);
                 strcpy(dates[j], dates[j + 1]);
                 strcpy(dates[j + 1], temp);
 
-                // source_file 값도 동시에 교환
-                int temp_source = source_file[j];
+                // source_file 값도 정렬
+                int source = source_file[j];
                 source_file[j] = source_file[j + 1];
-                source_file[j + 1] = temp_source;
+                source_file[j + 1] = source;
             }
         }
     }

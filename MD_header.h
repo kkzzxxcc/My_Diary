@@ -1,20 +1,20 @@
 #define _CRT_SECURE_NO_WARNINGS  // 비주얼 스튜디오에서 sacnf 오류 무시해주는 정의
 
 
-#include <windows.h> // windows api를 사용하기위한 헤더파일
-#include <conio.h> // 콘솔 입출력 관련 헤더파일
+#include <windows.h> 
+#include <conio.h> 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <locale.h> // 로캘 설정을 위한 헤더파일
+#include <locale.h> 
 
 
 // ┫ ┃ ━ ┓ ┛ ┗ ┏ ┳ ┻ ┣ ╋
 
 #define WIDTH 7
 #define HEIGHT 5
-#define MAX_LEN 1000 // 일기 내용을 위한 최대 문자 수
+#define MAX_LEN 1000 
 
 typedef struct
 {
